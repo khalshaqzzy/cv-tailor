@@ -25,12 +25,30 @@
       "sourceIds": ["cv-current", "project-eval-toolkit"]
     },
     "competencies": [
-      "LLM evaluation",
-      "ML platform engineering",
-      "Model monitoring",
-      "CI regression checks",
-      "Production reliability",
-      "Cross-functional delivery"
+      {
+        "text": "LLM evaluation",
+        "sourceIds": ["project-eval-toolkit"]
+      },
+      {
+        "text": "ML platform engineering",
+        "sourceIds": ["cv-current"]
+      },
+      {
+        "text": "Model monitoring",
+        "sourceIds": ["cv-current"]
+      },
+      {
+        "text": "CI regression checks",
+        "sourceIds": ["project-eval-toolkit"]
+      },
+      {
+        "text": "Production reliability",
+        "sourceIds": ["cv-current"]
+      },
+      {
+        "text": "Cross-functional delivery",
+        "sourceIds": ["cv-current"]
+      }
     ],
     "experience": [
       {

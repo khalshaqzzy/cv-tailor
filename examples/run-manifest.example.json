@@ -1,0 +1,25 @@
+{
+  "runId": "20260430-acme-ai-senior-ai-platform-engineer",
+  "createdAt": "2026-04-30T00:00:00.000Z",
+  "workspace": "C:/workspace/example",
+  "job": {
+    "company": "Acme AI",
+    "role": "Senior AI Platform Engineer",
+    "url": "https://jobs.example.com/acme-ai"
+  },
+  "humanReview": {
+    "approved": true,
+    "approvedAt": "2026-04-30T00:00:00.000Z",
+    "notes": "Example fixture."
+  },
+  "artifacts": {
+    "evaluationReport": ".cv-tailor/reports/20260430-acme-ai-senior-ai-platform-engineer.md",
+    "tailoredCvJson": ".cv-tailor/runs/20260430-acme-ai-senior-ai-platform-engineer/tailored-cv.json",
+    "html": ".cv-tailor/runs/20260430-acme-ai-senior-ai-platform-engineer/cv.html",
+    "pdf": ".cv-tailor/output/cv-alex-chen-acme-ai-2026-04-30.pdf"
+  },
+  "verification": {
+    "pdfExists": true,
+    "pdfSizeBytes": 72179
+  }
+}

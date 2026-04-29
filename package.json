@@ -12,10 +12,15 @@
   "scripts": {
     "doctor": "node scripts/doctor.mjs",
     "init": "node scripts/init.mjs",
+    "add-source": "node scripts/add-source.mjs",
+    "ats-keyword-check": "node scripts/ats-keyword-check.mjs",
+    "check-liveness": "node scripts/check-liveness.mjs",
     "render-html": "node scripts/render-html.mjs",
     "render-pdf": "node scripts/render-pdf.mjs",
+    "write-run-manifest": "node scripts/write-run-manifest.mjs",
     "validate-tailored-cv": "node scripts/validate-tailored-cv.mjs",
     "verify": "node scripts/verify.mjs",
+    "test-all": "node scripts/test-all.mjs",
     "check": "node scripts/check-syntax.mjs && npm run verify"
   },
   "keywords": [
@@ -26,6 +31,7 @@
     "playwright"
   ],
   "dependencies": {
+    "ajv": "^8.17.1",
     "playwright": "^1.58.1"
   },
   "engines": {

@@ -5,7 +5,7 @@
       "id": "cv-current",
       "type": "cv",
       "title": "Current CV",
-      "path": "examples/current-cv.md",
+      "path": "examples/cv-example.md",
       "url": null,
       "notes": "Example CV source.",
       "facts": [

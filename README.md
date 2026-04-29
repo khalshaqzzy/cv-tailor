@@ -92,6 +92,30 @@ Validate source-backed claims:
 npm run validate-tailored-cv -- examples/tailored-cv.example.json --source-registry examples/source-registry.example.json
 ```
 
+Run the full regression suite:
+
+```bash
+npm run test-all
+```
+
+Add a source to a workspace registry:
+
+```bash
+npm run add-source -- --workspace /path/to/workspace --id cv-current --type cv --title "Current CV" --path /path/to/cv.md --facts "Led ML platform team|Reduced deployment time"
+```
+
+Check ATS keyword coverage:
+
+```bash
+npm run ats-keyword-check -- examples/tailored-cv.example.json --job-dossier examples/job-dossier.example.json --min 0.5
+```
+
+Write a run manifest after PDF generation:
+
+```bash
+npm run write-run-manifest -- --workspace /path/to/workspace --tailored-cv examples/tailored-cv.example.json --html /path/to/cv.html --pdf /path/to/cv.pdf --approved
+```
+
 ## Attribution
 
 This plugin adapts selected MIT-licensed workflow ideas from

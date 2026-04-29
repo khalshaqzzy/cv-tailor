@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { existsSync, readdirSync } from 'fs';
+import { existsSync, readFileSync, readdirSync } from 'fs';
 import { join } from 'path';
 import { parseArgs, pluginRoot, runtimePaths } from './lib/workspace.mjs';
 
@@ -40,6 +40,21 @@ if (args.workspace) {
   add('workspace profile.yml', existsSync(paths.profile), 'Run npm run init -- --workspace <path>, then fill profile.yml.');
   add('workspace source-registry.json', existsSync(paths.sourceRegistry), 'Run npm run init -- --workspace <path>.');
   add('workspace story-bank.md', existsSync(paths.storyBank), 'Run npm run init -- --workspace <path>.');
+
+  if (existsSync(paths.profile)) {
+    const profile = readFileSafe(paths.profile);
+    add('workspace profile has candidate name', /full_name:\s*["']?[^"'\s]/.test(profile), 'Fill candidate.full_name in .cv-tailor/profile.yml.');
+    add('workspace profile has candidate email', /email:\s*["']?[^"'\s]/.test(profile), 'Fill candidate.email in .cv-tailor/profile.yml.');
+  }
+
+  if (existsSync(paths.sourceRegistry)) {
+    try {
+      const registry = JSON.parse(readFileSafe(paths.sourceRegistry));
+      add('workspace source registry has sources', Array.isArray(registry.sources) && registry.sources.length > 0, 'Add at least one real source with npm run add-source.');
+    } catch {
+      add('workspace source registry parses', false, 'Fix .cv-tailor/source-registry.json.');
+    }
+  }
 }
 
 let failures = 0;
@@ -58,3 +73,7 @@ if (failures > 0) {
 }
 
 console.log('\nAll checks passed.');
+
+function readFileSafe(path) {
+  return readFileSync(path, 'utf8');
+}

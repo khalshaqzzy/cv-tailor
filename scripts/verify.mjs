@@ -2,6 +2,7 @@
 
 import { existsSync, readdirSync, readFileSync } from 'fs';
 import { join } from 'path';
+import Ajv2020 from 'ajv/dist/2020.js';
 import { pluginRoot, readJson } from './lib/workspace.mjs';
 import { validateTailoredCv } from './validate-tailored-cv.mjs';
 
@@ -65,6 +66,23 @@ if (exampleCv && exampleRegistry) {
   const validation = validateTailoredCv(exampleCv, exampleRegistry);
   if (!validation.ok) {
     errors.push(...validation.errors.map((error) => `example tailored CV: ${error}`));
+  }
+}
+
+const ajv = new Ajv2020({ allErrors: true, strict: false });
+for (const [schemaFile, exampleFile, label] of [
+  ['source-registry.schema.json', 'source-registry.example.json', 'source registry example'],
+  ['job-dossier.schema.json', 'job-dossier.example.json', 'job dossier example'],
+  ['run-manifest.schema.json', 'run-manifest.example.json', 'run manifest example']
+]) {
+  const schema = requireJson(join(pluginRoot, 'schemas', schemaFile), schemaFile);
+  const example = requireJson(join(pluginRoot, 'examples', exampleFile), label);
+  if (!schema || !example) continue;
+  const validate = ajv.compile(schema);
+  if (!validate(example)) {
+    for (const error of validate.errors || []) {
+      errors.push(`${label}: ${error.instancePath || '/'} ${error.message}`);
+    }
   }
 }
 

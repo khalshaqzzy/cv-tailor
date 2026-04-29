@@ -103,6 +103,7 @@ be inferred.
 - **Goal:** Build or update durable candidate context.
 - **Read:** `.cv-tailor/profile.yml`, `.cv-tailor/source-registry.json`, `.cv-tailor/story-bank.md`, files in `.cv-tailor/sources/`, and user-provided chat context.
 - **Write:** Profile updates, source registry entries, source files, and story bank entries only when the user confirms the facts are durable.
+- **Run when adding files:** `npm --prefix <plugin-root> run add-source -- --workspace <workspace-root> --id <source-id> --type <type> --title <title> --path <file> --facts "fact one|fact two"`.
 - **Ask for:** Missing CV/profile text, GitHub/project links, LinkedIn export or pasted profile text, awards, publications, constraints, and target roles.
 - **Stop when:** Profile has enough evidence to tailor a CV or when the next missing context is clearly identified.
 
@@ -141,7 +142,7 @@ be inferred.
 
 - **Goal:** Validate install health and artifact integrity.
 - **Read:** Plugin files and, when provided, workspace runtime files.
-- **Run:** `npm --prefix <plugin-root> run doctor -- --workspace <workspace-root>` and `npm --prefix <plugin-root> run verify`.
+- **Run:** `npm --prefix <plugin-root> run doctor -- --workspace <workspace-root>`, `npm --prefix <plugin-root> run verify`, and for full repository validation `npm --prefix <plugin-root> run test-all`.
 - **Stop when:** Failures are fixed or clearly reported with exact next actions.
 
 ## Discovery Mode
@@ -199,7 +200,8 @@ For job URLs:
 
 1. Prefer Playwright/browser rendering for modern job pages.
 2. If blocked by auth, paywall, or a dynamic page that cannot be read, ask the user to paste the JD text.
-3. Use web search only for public company/compensation research, not to invent JD content.
+3. For live URLs, use `npm --prefix <plugin-root> run check-liveness -- <job-url>` when a deterministic active/expired check is useful.
+4. Use web search only for public company/compensation research, not to invent JD content.
 
 For pasted JD text, use it directly.
 
@@ -310,7 +312,17 @@ Render PDF:
 npm --prefix <plugin-root> run render-pdf -- <workspace-root>/.cv-tailor/runs/{run-id}/cv.html <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --format=a4
 ```
 
-Update the run manifest after generation.
+Check ATS keyword coverage when a job dossier or keyword list exists:
+
+```bash
+npm --prefix <plugin-root> run ats-keyword-check -- <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json --job-dossier <workspace-root>/.cv-tailor/runs/{run-id}/job-dossier.json --min 0.6
+```
+
+Update the run manifest after generation:
+
+```bash
+npm --prefix <plugin-root> run write-run-manifest -- --workspace <workspace-root> --tailored-cv <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json --html <workspace-root>/.cv-tailor/runs/{run-id}/cv.html --pdf <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --approved
+```
 
 ### 8. Verification
 
@@ -318,6 +330,12 @@ Run:
 
 ```bash
 npm --prefix <plugin-root> run verify
+```
+
+For a full plugin regression check, run:
+
+```bash
+npm --prefix <plugin-root> run test-all
 ```
 
 Also check that:
@@ -342,6 +360,7 @@ conservatively.
 - Deduplicate by source URL/path/title before adding a new source.
 - If a source contradicts another source, keep both and note the conflict instead of overwriting history.
 - If a fact is sensitive or private, ask whether it should be excluded from generated CVs by default.
+- Use `add-source` for durable file-backed sources so files are copied into `.cv-tailor/sources/` and dedupe rules are applied.
 
 ## Writing And ATS Rules
 
@@ -413,6 +432,12 @@ JD vocabulary when it is truthful. Prefer phrases such as:
 
 Avoid unsupported skill tags. If a keyword is only adjacent, place it in a
 bullet with context rather than as a standalone competency.
+
+In `tailored-cv.json`, each competency must be an object:
+
+```json
+{ "text": "LLM evaluation", "sourceIds": ["project-eval-toolkit"] }
+```
 
 ### 5. Work Experience
 

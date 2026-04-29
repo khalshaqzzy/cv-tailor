@@ -3,7 +3,7 @@
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, resolve } from 'path';
 import { chromium } from 'playwright';
-import { fileUrl, normalizeTextForATS, parseArgs, pluginRoot } from './lib/workspace.mjs';
+import { fileUrl, normalizeHtmlTextForATS, parseArgs, pluginRoot } from './lib/workspace.mjs';
 
 const args = parseArgs();
 const inputPath = args._[0];
@@ -33,7 +33,7 @@ mkdirSync(dirname(output), { recursive: true });
 let html = readFileSync(input, 'utf8');
 const fontsUrl = fileUrl(resolve(pluginRoot, 'fonts')).replace(/\/?$/, '/');
 html = html.replace(/url\(['"]?\.\/fonts\//g, `url('${fontsUrl}`);
-const normalized = normalizeTextForATS(html);
+const normalized = normalizeHtmlTextForATS(html);
 html = normalized.text;
 
 const browser = await chromium.launch({ headless: true });

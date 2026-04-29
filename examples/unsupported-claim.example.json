@@ -1,0 +1,28 @@
+{
+  "candidate": {
+    "name": "Alex Chen",
+    "email": "alex@example.com"
+  },
+  "job": {
+    "company": "Acme AI",
+    "role": "Senior AI Platform Engineer"
+  },
+  "metadata": {
+    "approvedByUser": true,
+    "paperFormat": "a4"
+  },
+  "sections": {
+    "summary": {
+      "text": "AI platform engineer with unsupported Kubernetes leadership claim.",
+      "sourceIds": ["unknown-source"]
+    },
+    "competencies": [
+      {
+        "text": "Kubernetes platform ownership",
+        "sourceIds": ["unknown-source"]
+      }
+    ],
+    "experience": [],
+    "skills": []
+  }
+}

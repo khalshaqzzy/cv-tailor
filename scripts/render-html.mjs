@@ -62,6 +62,13 @@ function renderSkills(items = []) {
   }).join('');
 }
 
+function renderCompetencies(items = []) {
+  return items.map((item) => {
+    const text = typeof item === 'string' ? item : item.text;
+    return `<span class="tag">${htmlEscape(text)}</span>`;
+  }).join('');
+}
+
 function renderHtml(cv) {
   const template = readFileSync(join(pluginRoot, 'templates', 'cv-template.html'), 'utf8');
   const candidate = cv.candidate || {};
@@ -83,7 +90,7 @@ function renderHtml(cv) {
     '{{NAME}}': htmlEscape(candidate.name),
     '{{CONTACT_ITEMS}}': contacts,
     '{{SUMMARY_TEXT}}': htmlEscape(sections.summary?.text || ''),
-    '{{COMPETENCIES}}': (sections.competencies || []).map((item) => `<span class="tag">${htmlEscape(item)}</span>`).join(''),
+    '{{COMPETENCIES}}': renderCompetencies(sections.competencies || []),
     '{{EXPERIENCE}}': renderExperience(sections.experience || []),
     '{{PROJECTS}}': renderProjects(sections.projects || []),
     '{{EDUCATION}}': renderSimpleItems(sections.education || []),

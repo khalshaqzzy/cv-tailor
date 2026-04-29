@@ -1,0 +1,26 @@
+{
+  "company": "Acme AI",
+  "role": "Senior AI Platform Engineer",
+  "url": "https://jobs.example.com/acme-ai",
+  "language": "en",
+  "location": "Remote",
+  "jobDescription": "Acme AI is hiring a Senior AI Platform Engineer to build reliable LLM infrastructure, evaluation pipelines, model observability, and CI regression testing for enterprise AI products.",
+  "requirements": [
+    "Production AI or ML platform experience",
+    "LLM evaluation and regression testing",
+    "Model observability and monitoring",
+    "Python and distributed systems",
+    "Cross-functional delivery with product and engineering"
+  ],
+  "atsKeywords": [
+    "LLM evaluation",
+    "AI platform",
+    "model observability",
+    "CI regression testing",
+    "distributed systems",
+    "Python",
+    "production ML",
+    "enterprise AI"
+  ],
+  "createdAt": "2026-04-30T00:00:00.000Z"
+}

@@ -117,6 +117,50 @@ export function normalizeTextForATS(text) {
   return { text: output, replacements };
 }
 
+export function normalizeHtmlTextForATS(html) {
+  const replacements = {};
+  const bump = (key, n = 1) => {
+    replacements[key] = (replacements[key] || 0) + n;
+  };
+
+  const masks = [];
+  const masked = String(html ?? '').replace(
+    /<(style|script)\b[^>]*>[\s\S]*?<\/\1>/gi,
+    (match) => {
+      const token = `\u0000MASK${masks.length}\u0000`;
+      masks.push(match);
+      return token;
+    }
+  );
+
+  let output = '';
+  let index = 0;
+  while (index < masked.length) {
+    const tagStart = masked.indexOf('<', index);
+    if (tagStart === -1) {
+      output += sanitize(masked.slice(index));
+      break;
+    }
+    output += sanitize(masked.slice(index, tagStart));
+    const tagEnd = masked.indexOf('>', tagStart);
+    if (tagEnd === -1) {
+      output += masked.slice(tagStart);
+      break;
+    }
+    output += masked.slice(tagStart, tagEnd + 1);
+    index = tagEnd + 1;
+  }
+
+  const restored = output.replace(/\u0000MASK(\d+)\u0000/g, (_, maskIndex) => masks[Number(maskIndex)]);
+  return { text: restored, replacements };
+
+  function sanitize(text) {
+    const normalized = normalizeTextForATS(text);
+    for (const [key, count] of Object.entries(normalized.replacements)) bump(key, count);
+    return normalized.text;
+  }
+}
+
 export function todayIso() {
   return new Date().toISOString().slice(0, 10);
 }
