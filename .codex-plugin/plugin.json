@@ -31,8 +31,8 @@
       "PDF generation"
     ],
     "websiteURL": "https://github.com/khalshaqzzy/cv-tailor",
-    "privacyPolicyURL": "https://github.com/khalshaqzzy/cv-tailor",
-    "termsOfServiceURL": "https://github.com/khalshaqzzy/cv-tailor",
+    "privacyPolicyURL": "https://github.com/khalshaqzzy/cv-tailor/blob/main/docs/privacy.md",
+    "termsOfServiceURL": "https://github.com/khalshaqzzy/cv-tailor/blob/main/docs/terms.md",
     "defaultPrompt": [
       "Tailor my CV for this job description.",
       "Ground my profile from my CV and projects.",

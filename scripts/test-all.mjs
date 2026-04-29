@@ -149,7 +149,34 @@ try {
   fail(`liveness classifier crashed: ${error.message}`);
 }
 
-console.log('\n5. Repository hygiene');
+console.log('\n5. Local Codex install');
+const installHome = mkdtempSync(join(tmpdir(), 'cv-tailor-install-'));
+try {
+  const install = runNode([
+    'scripts/install-codex-local.mjs',
+    '--home', installHome,
+    '--source', pluginRoot,
+    '--force'
+  ]);
+  if (
+    install.status === 0
+    && existsSync(join(installHome, 'plugins/cv-tailor/.codex-plugin/plugin.json'))
+    && existsSync(join(installHome, '.agents/plugins/marketplace.json'))
+    && existsSync(join(installHome, '.codex/config.toml'))
+  ) {
+    pass('install-codex-local creates plugin, marketplace, and config');
+  } else {
+    fail(`install-codex-local failed: ${install.stdout}${install.stderr}`);
+  }
+
+  const codexDoctor = runNode(['scripts/doctor.mjs', '--codex', '--home', installHome]);
+  if (codexDoctor.status === 0) pass('doctor --codex validates local install');
+  else fail(`doctor --codex failed: ${codexDoctor.stdout}${codexDoctor.stderr}`);
+} finally {
+  rmSync(installHome, { recursive: true, force: true });
+}
+
+console.log('\n6. Repository hygiene');
 if (!existsSync(join(pluginRoot, '.cv-tailor'))) pass('plugin repo has no runtime .cv-tailor data');
 else fail('plugin repo contains runtime .cv-tailor data');
 
@@ -163,7 +190,8 @@ const scanTargets = [
   'scripts',
   'templates',
   'schemas',
-  'examples'
+  'examples',
+  'docs'
 ];
 let absoluteLeak = false;
 for (const target of scanTargets) {

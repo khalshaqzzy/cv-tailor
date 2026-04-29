@@ -1,0 +1,20 @@
+{
+  "name": "local",
+  "interface": {
+    "displayName": "Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "cv-tailor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cv-tailor"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

@@ -10,6 +10,8 @@
     "url": "https://github.com/khalshaqzzy/cv-tailor.git"
   },
   "scripts": {
+    "setup": "npm install && npx playwright install chromium && npm run doctor",
+    "install:codex": "node scripts/install-codex-local.mjs",
     "doctor": "node scripts/doctor.mjs",
     "init": "node scripts/init.mjs",
     "add-source": "node scripts/add-source.mjs",

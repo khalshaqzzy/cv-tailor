@@ -1,0 +1,7 @@
+[marketplaces.local]
+last_updated = "2026-01-01T00:00:00Z"
+source_type = "local"
+source = '<home>'
+
+[plugins."cv-tailor@local"]
+enabled = true

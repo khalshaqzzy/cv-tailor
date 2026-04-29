@@ -59,28 +59,26 @@ truthful, CV Tailor gives Codex a workflow and tooling for:
 
 ## Quick Start
 
+Use this path when you want Codex to discover and run the plugin.
+
+Windows PowerShell:
+
+```powershell
+git clone https://github.com/khalshaqzzy/cv-tailor "$HOME\plugins\cv-tailor"
+Set-Location "$HOME\plugins\cv-tailor"
+npm run setup
+npm run install:codex
+npm run doctor -- --codex
+```
+
+macOS/Linux:
+
 ```bash
-# 1. Clone and install
-git clone https://github.com/khalshaqzzy/cv-tailor.git
-cd cv-tailor
-npm install
-npx playwright install chromium
-
-# 2. Verify the plugin
-npm run doctor
-npm run test-all
-
-# 3. Initialize a user workspace
-npm run init -- --workspace /path/to/workspace
-
-# 4. Add a real CV source
-npm run add-source -- \
-  --workspace /path/to/workspace \
-  --id cv-current \
-  --type cv \
-  --title "Current CV" \
-  --path /path/to/current-cv.md \
-  --facts "Led ML platform team|Reduced deployment time from 2 weeks to 4 hours"
+git clone https://github.com/khalshaqzzy/cv-tailor "$HOME/plugins/cv-tailor"
+cd "$HOME/plugins/cv-tailor"
+npm run setup
+npm run install:codex
+npm run doctor -- --codex
 ```
 
 After installing the plugin in Codex, ask:
@@ -97,7 +95,15 @@ Use cv-tailor profile to ground my profile from this CV and these GitHub repos.
 
 ## Install As A Codex Plugin
 
-This repository is the plugin root. The manifest is:
+This repository is the plugin root, but Codex discovery is a separate step.
+There are two workflows:
+
+| Workflow | Use when |
+| --- | --- |
+| **Install in Codex** | You want Codex to list and run `cv-tailor` as a local plugin. |
+| **Develop the plugin** | You are editing scripts, schemas, templates, examples, or the skill. |
+
+The plugin manifest is:
 
 ```text
 .codex-plugin/plugin.json
@@ -109,10 +115,86 @@ The plugin exposes:
 skills/cv-tailor/SKILL.md
 ```
 
-Install this repository as a local Codex plugin using your Codex plugin
-installation flow. Once installed, Codex can trigger the `cv-tailor` skill when
-the user asks for resume/CV tailoring, profile grounding, ATS PDF generation, or
-job-specific CV evaluation.
+### Option A: Scripted Local Install
+
+From the plugin root:
+
+```bash
+npm run setup
+npm run install:codex
+npm run doctor -- --codex
+```
+
+`npm run install:codex` is idempotent. It installs or verifies
+`<home>/plugins/cv-tailor`, updates `<home>/.agents/plugins/marketplace.json`,
+and enables `[plugins."cv-tailor@local"]` in `<home>/.codex/config.toml`.
+
+Use `--skip-config` if you want to update Codex config manually:
+
+```bash
+npm run install:codex -- --skip-config
+```
+
+### Option B: Manual Local Install
+
+Create or update `<home>/.agents/plugins/marketplace.json`:
+
+```json
+{
+  "name": "local",
+  "interface": {
+    "displayName": "Local Plugins"
+  },
+  "plugins": [
+    {
+      "name": "cv-tailor",
+      "source": {
+        "source": "local",
+        "path": "./plugins/cv-tailor"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}
+```
+
+Create or update `<home>/.codex/config.toml`:
+
+```toml
+[marketplaces.local]
+last_updated = "2026-01-01T00:00:00Z"
+source_type = "local"
+source = '<home>'
+
+[plugins."cv-tailor@local"]
+enabled = true
+```
+
+Then run:
+
+```bash
+npm run doctor -- --codex
+```
+
+Restart Codex or open a new thread so the plugin list refreshes.
+
+Full install details are in [docs/install-codex-local.md](docs/install-codex-local.md).
+
+### Develop The Plugin
+
+For development, clone anywhere and run:
+
+```bash
+npm install
+npx playwright install chromium
+npm run test-all
+```
+
+This validates the repo without requiring Codex local marketplace registration.
 
 ## Runtime Data
 
@@ -228,7 +310,9 @@ The full workflow is intentionally conservative:
 
 | Command | Purpose |
 | --- | --- |
-| `npm run doctor` | Validate plugin prerequisites. Add `-- --workspace <path>` to check runtime files. |
+| `npm run setup` | Install npm dependencies, install Playwright Chromium, and run `doctor`. |
+| `npm run install:codex` | Install/register the plugin in the local Codex marketplace. |
+| `npm run doctor` | Validate plugin prerequisites. Add `-- --workspace <path>` to check runtime files or `-- --codex` to check Codex discovery. |
 | `npm run init -- --workspace <path>` | Create `.cv-tailor/` runtime structure. |
 | `npm run add-source -- ...` | Copy a source file into `.cv-tailor/sources/` and register its facts. |
 | `npm run validate-tailored-cv -- <json>` | Validate tailored CV shape, approval, and source references. |
@@ -253,6 +337,9 @@ The `examples/` directory contains fixtures adapted from the Career Ops style:
 | `examples/tailored-cv.example.json` | Valid source-backed tailored CV fixture. |
 | `examples/unsupported-claim.example.json` | Negative fixture that should fail validation. |
 | `examples/run-manifest.example.json` | Example run manifest. |
+| `examples/codex-marketplace.local.example.json` | Local Codex marketplace registration example. |
+| `examples/codex-config.local.example.toml` | Local Codex config snippet for enabling the plugin. |
+| `examples/install/` | Expected install fixtures used by local install verification. |
 
 Try the example pipeline:
 
@@ -293,6 +380,7 @@ cv-tailor/
     ats-keyword-check.mjs
     check-liveness.mjs
     doctor.mjs
+    install-codex-local.mjs
     init.mjs
     render-html.mjs
     render-pdf.mjs
@@ -314,6 +402,7 @@ cv-tailor/
     source-registry.example.json
     story-bank.template.md
   examples/
+  docs/
   fonts/
   assets/
 ```
@@ -371,6 +460,9 @@ Use it responsibly:
 - Review every generated CV before using it.
 - Respect job board and employer terms of service.
 
+See [docs/privacy.md](docs/privacy.md), [docs/terms.md](docs/terms.md), and
+[docs/security.md](docs/security.md) for the marketplace-facing policy docs.
+
 ## Testing
 
 Run the complete test suite before committing changes:
@@ -391,6 +483,7 @@ The suite checks:
 - run manifest writing
 - ATS keyword coverage
 - liveness classification
+- local Codex installer and discovery checks
 - repository hygiene
 
 ## Roadmap

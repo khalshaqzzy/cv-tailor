@@ -35,6 +35,10 @@ requireFile(join(pluginRoot, 'skills', 'cv-tailor', 'SKILL.md'), 'cv-tailor skil
 requireFile(join(pluginRoot, 'templates', 'cv-template.html'), 'CV HTML template');
 requireFile(join(pluginRoot, 'templates', 'profile.example.yml'), 'profile template');
 requireFile(join(pluginRoot, 'templates', 'story-bank.template.md'), 'story bank template');
+requireFile(join(pluginRoot, 'docs', 'install-codex-local.md'), 'Codex local install docs');
+requireFile(join(pluginRoot, 'docs', 'privacy.md'), 'privacy policy docs');
+requireFile(join(pluginRoot, 'docs', 'terms.md'), 'terms docs');
+requireFile(join(pluginRoot, 'docs', 'security.md'), 'security docs');
 
 for (const schema of [
   'profile.schema.json',
@@ -62,6 +66,20 @@ if (!gitignore.split(/\r?\n/).includes('.cv-tailor/')) {
 
 const exampleCv = requireJson(join(pluginRoot, 'examples', 'tailored-cv.example.json'), 'example tailored CV');
 const exampleRegistry = requireJson(join(pluginRoot, 'examples', 'source-registry.example.json'), 'example source registry');
+const localMarketplace = requireJson(join(pluginRoot, 'examples', 'codex-marketplace.local.example.json'), 'local marketplace example');
+if (localMarketplace) {
+  const plugin = Array.isArray(localMarketplace.plugins)
+    ? localMarketplace.plugins.find((entry) => entry?.name === 'cv-tailor')
+    : null;
+  if (!plugin) errors.push('local marketplace example must include cv-tailor.');
+  else {
+    if (plugin.source?.source !== 'local') errors.push('local marketplace example source.source must be "local".');
+    if (plugin.source?.path !== './plugins/cv-tailor') errors.push('local marketplace example source.path must be "./plugins/cv-tailor".');
+    if (!plugin.policy?.installation) errors.push('local marketplace example must include policy.installation.');
+    if (!plugin.policy?.authentication) errors.push('local marketplace example must include policy.authentication.');
+    if (!plugin.category) errors.push('local marketplace example must include category.');
+  }
+}
 if (exampleCv && exampleRegistry) {
   const validation = validateTailoredCv(exampleCv, exampleRegistry);
   if (!validation.ok) {
