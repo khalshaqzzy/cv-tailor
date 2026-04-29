@@ -1,0 +1,83 @@
+{
+  "candidate": {
+    "name": "Alex Chen",
+    "email": "alex@example.com",
+    "phone": "+1-555-0123",
+    "location": "Austin, TX",
+    "linkedin": "https://linkedin.com/in/alexchen",
+    "github": "https://github.com/alexchen",
+    "portfolio": "https://alexchen.dev"
+  },
+  "job": {
+    "company": "Acme AI",
+    "role": "Senior AI Platform Engineer",
+    "url": "https://jobs.example.com/acme-ai"
+  },
+  "metadata": {
+    "approvedByUser": true,
+    "paperFormat": "a4",
+    "language": "en",
+    "generatedAt": "2026-04-30T00:00:00.000Z"
+  },
+  "sections": {
+    "summary": {
+      "text": "AI platform engineer with six years building production ML systems, model monitoring, and evaluation workflows. Led platform work that cut deployment time from two weeks to four hours and now focuses on reliable LLM infrastructure.",
+      "sourceIds": ["cv-current", "project-eval-toolkit"]
+    },
+    "competencies": [
+      "LLM evaluation",
+      "ML platform engineering",
+      "Model monitoring",
+      "CI regression checks",
+      "Production reliability",
+      "Cross-functional delivery"
+    ],
+    "experience": [
+      {
+        "company": "TechFin Corp",
+        "role": "Senior ML Engineer / ML Platform Lead",
+        "period": "2020-2024",
+        "location": "Austin, TX",
+        "bullets": [
+          {
+            "text": "Led ML platform work for production model registry, deployment, monitoring, and retraining workflows used by multiple engineering teams.",
+            "sourceIds": ["cv-current"]
+          },
+          {
+            "text": "Reduced model deployment time from two weeks to four hours by building CI/CD paths for tested model releases.",
+            "sourceIds": ["cv-current"]
+          }
+        ]
+      }
+    ],
+    "projects": [
+      {
+        "name": "LLM Eval Toolkit",
+        "description": "Open source evaluation framework for LLM applications with custom metrics and CI regression checks.",
+        "tech": "Python, LLM evals, CI",
+        "sourceIds": ["project-eval-toolkit"]
+      }
+    ],
+    "education": [
+      {
+        "title": "MS Computer Science",
+        "subtitle": "UT Austin",
+        "period": "2018",
+        "sourceIds": ["cv-current"]
+      }
+    ],
+    "certifications": [],
+    "skills": [
+      {
+        "category": "AI/ML",
+        "items": ["LLM evaluation", "model monitoring", "ML platforms"],
+        "sourceIds": ["cv-current", "project-eval-toolkit"]
+      },
+      {
+        "category": "Engineering",
+        "items": ["CI/CD", "distributed systems", "observability"],
+        "sourceIds": ["cv-current"]
+      }
+    ]
+  }
+}

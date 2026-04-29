@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "cv-current",
+      "type": "cv",
+      "title": "Current CV",
+      "path": "examples/current-cv.md",
+      "url": null,
+      "notes": "Example CV source.",
+      "facts": [
+        "Led an ML platform team.",
+        "Reduced model deployment time from two weeks to four hours.",
+        "Built model monitoring dashboards."
+      ]
+    },
+    {
+      "id": "project-eval-toolkit",
+      "type": "project",
+      "title": "LLM Eval Toolkit",
+      "path": null,
+      "url": "https://github.com/example/llm-eval-toolkit",
+      "notes": "Example open source project.",
+      "facts": [
+        "Created an evaluation framework for LLM applications.",
+        "Supported custom metrics and CI regression checks."
+      ]
+    }
+  ]
+}

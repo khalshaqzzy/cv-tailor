@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "sources": [
+    {
+      "id": "cv-current",
+      "type": "cv",
+      "title": "Current CV",
+      "path": ".cv-tailor/sources/current-cv.md",
+      "url": null,
+      "notes": "Primary candidate CV. Replace with the user's real CV source.",
+      "facts": [
+        "Led an ML platform team.",
+        "Built production model monitoring.",
+        "Reduced deployment time from two weeks to four hours."
+      ]
+    }
+  ]
+}

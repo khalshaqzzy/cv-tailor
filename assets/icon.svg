@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="128" height="128" viewBox="0 0 128 128" role="img" aria-label="CV Tailor icon">
+  <rect width="128" height="128" rx="28" fill="#0f766e"/>
+  <path d="M38 24h38l16 16v64H38z" fill="#f8fafc"/>
+  <path d="M76 24v18h18" fill="#ccfbf1"/>
+  <path d="M48 56h32M48 70h32M48 84h22" stroke="#0f766e" stroke-width="7" stroke-linecap="round"/>
+</svg>

@@ -1,0 +1,52 @@
+# CV Tailor Profile
+# Copy to .cv-tailor/profile.yml and replace all example values.
+
+candidate:
+  full_name: "Jane Smith"
+  email: "jane@example.com"
+  phone: "+1-555-0123"
+  location: "San Francisco, CA"
+  timezone: "America/Los_Angeles"
+  linkedin: "https://linkedin.com/in/janesmith"
+  github: "https://github.com/janesmith"
+  portfolio_url: "https://janesmith.dev"
+
+targets:
+  primary_roles:
+    - "Senior AI Engineer"
+    - "Staff ML Engineer"
+  industries:
+    - "AI infrastructure"
+    - "Developer tools"
+  work_preferences:
+    remote: "Remote preferred"
+    relocation: "Not preferred"
+    travel: "Up to 10%"
+  compensation:
+    currency: "USD"
+    target_range: "$180K-$230K"
+    minimum: "$150K"
+
+narrative:
+  headline: "AI platform engineer who ships production ML systems"
+  positioning: "Builder with product sense, platform ownership, and measurable production outcomes."
+  superpowers:
+    - "Production ML and LLM evaluation"
+    - "Cross-functional platform leadership"
+    - "Turning prototypes into reliable systems"
+  constraints:
+    - "Do not imply management experience beyond documented team leadership."
+    - "Do not include unsourced cloud certifications."
+
+cv_preferences:
+  language: "en"
+  default_paper_format: "a4"
+  target_length: "1-2 pages"
+  include_sections:
+    - "Professional Summary"
+    - "Core Competencies"
+    - "Work Experience"
+    - "Projects"
+    - "Education"
+    - "Certifications"
+    - "Skills"

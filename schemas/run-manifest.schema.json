@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/khalshaqzzy/cv-tailor/schemas/run-manifest.schema.json",
+  "title": "CV Tailor Run Manifest",
+  "type": "object",
+  "required": ["runId", "createdAt", "workspace", "job", "artifacts"],
+  "properties": {
+    "runId": { "type": "string", "minLength": 1 },
+    "createdAt": { "type": "string" },
+    "workspace": { "type": "string" },
+    "job": {
+      "type": "object",
+      "required": ["company", "role"],
+      "properties": {
+        "company": { "type": "string" },
+        "role": { "type": "string" },
+        "url": { "type": ["string", "null"] }
+      },
+      "additionalProperties": true
+    },
+    "humanReview": {
+      "type": "object",
+      "properties": {
+        "approved": { "type": "boolean" },
+        "approvedAt": { "type": "string" },
+        "notes": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "artifacts": {
+      "type": "object",
+      "properties": {
+        "evaluationReport": { "type": "string" },
+        "tailoredCvJson": { "type": "string" },
+        "html": { "type": "string" },
+        "pdf": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "verification": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/khalshaqzzy/cv-tailor/schemas/source-registry.schema.json",
+  "title": "CV Tailor Source Registry",
+  "type": "object",
+  "required": ["version", "sources"],
+  "properties": {
+    "version": { "type": "integer", "minimum": 1 },
+    "sources": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "title"],
+        "properties": {
+          "id": { "type": "string", "pattern": "^[a-zA-Z0-9._-]+$" },
+          "type": {
+            "type": "string",
+            "enum": ["cv", "github", "linkedin", "portfolio", "project", "award", "publication", "certification", "job-description", "manual-note", "other"]
+          },
+          "title": { "type": "string", "minLength": 1 },
+          "path": { "type": ["string", "null"] },
+          "url": { "type": ["string", "null"] },
+          "notes": { "type": "string" },
+          "facts": { "type": "array", "items": { "type": "string" } }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

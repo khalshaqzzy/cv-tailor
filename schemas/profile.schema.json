@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/khalshaqzzy/cv-tailor/schemas/profile.schema.json",
+  "title": "CV Tailor Profile",
+  "type": "object",
+  "required": ["candidate"],
+  "properties": {
+    "candidate": {
+      "type": "object",
+      "required": ["full_name", "email"],
+      "properties": {
+        "full_name": { "type": "string", "minLength": 1 },
+        "email": { "type": "string", "minLength": 3 },
+        "phone": { "type": "string" },
+        "location": { "type": "string" },
+        "timezone": { "type": "string" },
+        "linkedin": { "type": "string" },
+        "github": { "type": "string" },
+        "portfolio_url": { "type": "string" }
+      },
+      "additionalProperties": true
+    },
+    "targets": { "type": "object", "additionalProperties": true },
+    "narrative": { "type": "object", "additionalProperties": true },
+    "cv_preferences": { "type": "object", "additionalProperties": true }
+  },
+  "additionalProperties": true
+}

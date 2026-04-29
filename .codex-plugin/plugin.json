@@ -1,0 +1,45 @@
+{
+  "name": "cv-tailor",
+  "version": "0.1.0",
+  "description": "Codex workflow for source-grounded, ATS-safe CV tailoring from user context and job descriptions.",
+  "author": {
+    "name": "khalshaqzzy",
+    "email": "19623094@std.stei.itb.ac.id",
+    "url": "https://github.com/khalshaqzzy"
+  },
+  "homepage": "https://github.com/khalshaqzzy/cv-tailor",
+  "repository": "https://github.com/khalshaqzzy/cv-tailor",
+  "license": "MIT",
+  "keywords": [
+    "codex",
+    "cv",
+    "resume",
+    "ats",
+    "career"
+  ],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "CV Tailor",
+    "shortDescription": "Tailor source-backed ATS CVs for specific jobs.",
+    "longDescription": "CV Tailor guides Codex through candidate context gathering, profile grounding, job evaluation, human review, source-backed CV generation, and ATS-safe PDF rendering. User data stays in a workspace-local .cv-tailor folder.",
+    "developerName": "khalshaqzzy",
+    "category": "Productivity",
+    "capabilities": [
+      "Interactive",
+      "Write",
+      "Local files",
+      "PDF generation"
+    ],
+    "websiteURL": "https://github.com/khalshaqzzy/cv-tailor",
+    "privacyPolicyURL": "https://github.com/khalshaqzzy/cv-tailor",
+    "termsOfServiceURL": "https://github.com/khalshaqzzy/cv-tailor",
+    "defaultPrompt": [
+      "Tailor my CV for this job description.",
+      "Ground my profile from my CV and projects.",
+      "Generate an ATS PDF after I approve the plan."
+    ],
+    "brandColor": "#0F766E",
+    "logo": "./assets/logo.svg",
+    "composerIcon": "./assets/icon.svg"
+  }
+}

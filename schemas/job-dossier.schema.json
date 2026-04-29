@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/khalshaqzzy/cv-tailor/schemas/job-dossier.schema.json",
+  "title": "CV Tailor Job Dossier",
+  "type": "object",
+  "required": ["company", "role", "jobDescription"],
+  "properties": {
+    "company": { "type": "string", "minLength": 1 },
+    "role": { "type": "string", "minLength": 1 },
+    "jobDescription": { "type": "string", "minLength": 20 },
+    "url": { "type": ["string", "null"] },
+    "language": { "type": "string", "default": "en" },
+    "location": { "type": "string" },
+    "requirements": { "type": "array", "items": { "type": "string" } },
+    "atsKeywords": { "type": "array", "items": { "type": "string" } },
+    "createdAt": { "type": "string" }
+  },
+  "additionalProperties": true
+}

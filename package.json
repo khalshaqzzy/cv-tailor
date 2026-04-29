@@ -1,0 +1,34 @@
+{
+  "name": "cv-tailor",
+  "version": "0.1.0",
+  "description": "Codex plugin for source-grounded ATS CV tailoring.",
+  "type": "module",
+  "private": false,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khalshaqzzy/cv-tailor.git"
+  },
+  "scripts": {
+    "doctor": "node scripts/doctor.mjs",
+    "init": "node scripts/init.mjs",
+    "render-html": "node scripts/render-html.mjs",
+    "render-pdf": "node scripts/render-pdf.mjs",
+    "validate-tailored-cv": "node scripts/validate-tailored-cv.mjs",
+    "verify": "node scripts/verify.mjs",
+    "check": "node scripts/check-syntax.mjs && npm run verify"
+  },
+  "keywords": [
+    "codex-plugin",
+    "resume",
+    "cv",
+    "ats",
+    "playwright"
+  ],
+  "dependencies": {
+    "playwright": "^1.58.1"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

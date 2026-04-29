@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="{{LANG}}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{NAME}} - CV</title>
+<style>
+  @font-face {
+    font-family: 'Space Grotesk';
+    src: url('./fonts/space-grotesk-latin.woff2') format('woff2');
+    font-weight: 300 700;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  @font-face {
+    font-family: 'DM Sans';
+    src: url('./fonts/dm-sans-latin.woff2') format('woff2');
+    font-weight: 100 1000;
+    font-style: normal;
+    font-display: swap;
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  body {
+    margin: 0;
+    background: #ffffff;
+    color: #172033;
+    font-family: 'DM Sans', Arial, sans-serif;
+    font-size: 11px;
+    line-height: 1.5;
+  }
+
+  .page {
+    width: 100%;
+    max-width: {{PAGE_WIDTH}};
+    margin: 0 auto;
+  }
+
+  .header {
+    margin-bottom: 18px;
+  }
+
+  h1 {
+    margin: 0 0 6px;
+    color: #101827;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: 0;
+    line-height: 1.1;
+  }
+
+  .rule {
+    height: 2px;
+    margin-bottom: 10px;
+    border-radius: 1px;
+    background: linear-gradient(to right, #0f766e, #4f46e5);
+  }
+
+  .contact {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    color: #4b5563;
+    font-size: 10.5px;
+  }
+
+  .contact a {
+    color: #4b5563;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .section {
+    margin-bottom: 16px;
+  }
+
+  .section-title {
+    margin-bottom: 9px;
+    padding-bottom: 4px;
+    border-bottom: 1.5px solid #d9e2e7;
+    color: #0f766e;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    line-height: 1.2;
+    text-transform: uppercase;
+  }
+
+  .summary {
+    color: #273449;
+    font-size: 11px;
+    line-height: 1.65;
+  }
+
+  .competencies {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+  }
+
+  .tag {
+    border: 1px solid #b8ddd8;
+    border-radius: 3px;
+    background: #eefaf8;
+    color: #0b5f59;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+  }
+
+  .item {
+    margin-bottom: 12px;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .item-head {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    align-items: baseline;
+  }
+
+  .item-title {
+    color: #4f46e5;
+    font-family: 'Space Grotesk', Arial, sans-serif;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .item-meta {
+    color: #6b7280;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .item-subtitle {
+    color: #253044;
+    font-size: 10.8px;
+    font-weight: 700;
+    margin-top: 2px;
+  }
+
+  .item-location {
+    color: #6b7280;
+    font-size: 10px;
+    margin-top: 1px;
+  }
+
+  ul {
+    margin: 5px 0 0;
+    padding-left: 17px;
+  }
+
+  li {
+    margin-bottom: 3px;
+    color: #273449;
+    font-size: 10.5px;
+    line-height: 1.55;
+  }
+
+  .skills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px 14px;
+  }
+
+  .skill {
+    color: #273449;
+    font-size: 10.5px;
+  }
+
+  .skill strong {
+    color: #101827;
+    font-weight: 700;
+  }
+
+  .avoid-break {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  @media print {
+    .page {
+      padding: 0;
+    }
+  }
+</style>
+</head>
+<body>
+  <main class="page">
+    <header class="header avoid-break">
+      <h1>{{NAME}}</h1>
+      <div class="rule"></div>
+      <div class="contact">{{CONTACT_ITEMS}}</div>
+    </header>
+
+    <section class="section avoid-break">
+      <div class="section-title">Professional Summary</div>
+      <div class="summary">{{SUMMARY_TEXT}}</div>
+    </section>
+
+    <section class="section avoid-break">
+      <div class="section-title">Core Competencies</div>
+      <div class="competencies">{{COMPETENCIES}}</div>
+    </section>
+
+    <section class="section">
+      <div class="section-title">Work Experience</div>
+      {{EXPERIENCE}}
+    </section>
+
+    <section class="section">
+      <div class="section-title">Projects</div>
+      {{PROJECTS}}
+    </section>
+
+    <section class="section avoid-break">
+      <div class="section-title">Education</div>
+      {{EDUCATION}}
+    </section>
+
+    <section class="section avoid-break">
+      <div class="section-title">Certifications</div>
+      {{CERTIFICATIONS}}
+    </section>
+
+    <section class="section avoid-break">
+      <div class="section-title">Skills</div>
+      <div class="skills">{{SKILLS}}</div>
+    </section>
+  </main>
+</body>
+</html>
