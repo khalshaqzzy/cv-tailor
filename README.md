@@ -59,7 +59,16 @@ truthful, CV Tailor gives Codex a workflow and tooling for:
 
 ## Quick Start
 
-Use this path when you want Codex to discover and run the plugin.
+If you are already using Codex with the Plugin Creator flow, you can ask Codex
+to install the plugin directly from GitHub:
+
+<p align="center">
+  <img src="assets/install.png" alt="Codex prompt to install CV Tailor from the GitHub repository.">
+</p>
+
+The command-line path below is the explicit local install flow. Use it when you
+want to clone the plugin yourself, install dependencies, register it in your
+local Codex marketplace, and verify that Codex can discover it.
 
 Windows PowerShell:
 
@@ -241,27 +250,29 @@ Use cv-tailor story-bank to turn these achievements into STAR+R stories.
 
 ## How It Works
 
-```text
-Candidate sources + job description
-        |
-        v
-Preflight and workspace setup
-        |
-        v
-Profile grounding and source registry
-        |
-        v
-A-G evaluation report
-        |
-        v
-Human review gate
-        |
-        v
-tailored-cv.json
-        |
-        v
-source validation -> HTML -> PDF -> run manifest
-```
+<p align="center">
+  <img src="assets/how-it-works.png" alt="CV Tailor Codex agent workflow from context gathering through PDF verification.">
+</p>
+
+CV Tailor gives Codex a constrained workflow instead of a loose resume-writing
+prompt. The agent gathers user-provided context, grounds the candidate profile
+in registered evidence, analyzes the target role, pauses for human strategy
+review, generates structured CV content, and verifies the final PDF artifacts.
+
+The six stages are:
+
+1. **Gather Context** - Collect CVs, profile exports, project repos, portfolio
+   links, awards, publications, job descriptions, and user constraints.
+2. **Ground Profile** - Normalize candidate facts into `.cv-tailor/profile.yml`,
+   `.cv-tailor/source-registry.json`, and the reusable story bank.
+3. **Analyze Job** - Extract requirements, ATS terms, risks, seniority signals,
+   company context, and evidence gaps.
+4. **Review Strategy** - Ask the user to approve positioning, section priority,
+   project selection, gap framing, and PDF format before final generation.
+5. **Generate CV** - Produce `tailored-cv.json` with every meaningful bullet,
+   competency, and project tied to known `sourceIds`.
+6. **Verify PDF** - Validate source references, render ATS-safe HTML/PDF, check
+   artifacts, and write a run manifest for traceability.
 
 ## Source-Backed Claim Model
 
