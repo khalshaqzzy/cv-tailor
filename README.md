@@ -1,7 +1,7 @@
 # CV Tailor
 
 <p align="center">
-  <img src="assets/logo.svg" alt="CV Tailor logo" width="160">
+  <img src="assets/readme-hero.png" alt="Codex turns your career evidence into the right CV for the role.">
 </p>
 
 <p align="center">
