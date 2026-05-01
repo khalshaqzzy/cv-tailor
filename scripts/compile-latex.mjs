@@ -18,11 +18,25 @@ if (!inputPath || !outputPath) {
 }
 
 const input = resolve(inputPath);
-const output = resolve(outputPath);
+const requestedOutput = resolve(outputPath);
+const output = args.overwrite ? requestedOutput : uniquePath(requestedOutput);
 
 if (!existsSync(input)) {
   console.error(`Input TeX not found: ${input}`);
   process.exit(1);
+}
+
+function uniquePath(path) {
+  if (!existsSync(path)) return path;
+  const ext = path.toLowerCase().endsWith('.pdf') ? '.pdf' : '';
+  const stem = ext ? path.slice(0, -ext.length) : path;
+  let index = 2;
+  let candidate = `${stem}-v${index}${ext}`;
+  while (existsSync(candidate)) {
+    index += 1;
+    candidate = `${stem}-v${index}${ext}`;
+  }
+  return candidate;
 }
 
 let tectonic;

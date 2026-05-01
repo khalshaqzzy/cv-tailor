@@ -22,6 +22,7 @@ automation.
 - Ask for user approval before final PDF generation when tailoring choices materially affect positioning, section order, project selection, or gap framing.
 - Ask the user to choose the final renderer for each PDF run: HTML/Playwright or LaTeX/Tectonic.
 - Treat `examples/latex-reference-template.tex` as the source-of-truth example for LaTeX section structure, spacing, heading patterns, project link formatting, skill grouping, and compact technical language.
+- Preserve every generated version: never overwrite a prior PDF or raw LaTeX/HTML intermediate when the user asks for another version, a correction, or a rerender.
 - Do not scrape LinkedIn behind authentication. Prefer pasted profile text, exported profile PDF/text, or user-approved visible browser context.
 - Never submit an application or click a final submit/send/apply button.
 
@@ -132,7 +133,8 @@ be inferred.
 - **Write:** HTML or TeX intermediate files plus `.cv-tailor/output/*.pdf`.
 - **Ask:** If the user has not already chosen, ask whether to render with HTML/Playwright or LaTeX/Tectonic.
 - **Run:** `validate-tailored-cv`, then `render-cv -- --engine=html|latex`, or the explicit renderer scripts.
-- **Stop when:** The PDF exists, is non-empty, and the run manifest records the output.
+- **Versioning:** Use a unique output name for every render. Keep every raw `.tex` or `.html` intermediate. Do not pass `--overwrite` unless the user explicitly asks to replace a specific artifact.
+- **Stop when:** The uniquely named PDF exists, is non-empty, and the run manifest records the output.
 
 ### `story-bank`
 
@@ -318,6 +320,15 @@ npm --prefix <plugin-root> run validate-tailored-cv -- <workspace-root>/.cv-tail
 ### 7. Render PDF
 
 Use the renderer approved by the user.
+
+Versioning rules:
+
+- Every render must produce a unique PDF filename.
+- Every LaTeX render must keep the raw `.tex` file that produced that exact PDF.
+- Every HTML render must keep the raw `.html` file that produced that exact PDF.
+- When correcting or creating another version, reuse the previous run as input context but write new artifacts such as `cv-name-company-date-v2.pdf` and `cv-name-company-date-v2.tex`.
+- The `render-cv` and `compile-latex` scripts automatically append `-v2`, `-v3`, etc. when an output path already exists. Do not use `--overwrite` unless the user explicitly requests replacement.
+- Tell the user which versioned PDF and raw source file were created.
 
 Unified rendering:
 

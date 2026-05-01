@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { existsSync } from 'fs';
 import { extname, resolve } from 'path';
 import { spawnSync } from 'child_process';
 import { parseArgs, pluginRoot, readJson } from './lib/workspace.mjs';
@@ -22,7 +23,8 @@ if (!['html', 'latex'].includes(engine)) {
 }
 
 const input = resolve(inputPath);
-const output = resolve(outputPath);
+const requestedOutput = resolve(outputPath);
+const output = args.overwrite ? requestedOutput : uniquePath(requestedOutput);
 const stem = output.slice(0, -extname(output).length) || output;
 const intermediate = engine === 'html' ? `${stem}.html` : `${stem}.tex`;
 
@@ -52,4 +54,17 @@ function run(scriptArgs) {
     console.error(result.stderr);
     process.exit(result.status || 1);
   }
+}
+
+function uniquePath(path) {
+  if (!existsSync(path)) return path;
+  const ext = extname(path);
+  const stem = path.slice(0, -ext.length) || path;
+  let index = 2;
+  let candidate = `${stem}-v${index}${ext}`;
+  while (existsSync(candidate)) {
+    index += 1;
+    candidate = `${stem}-v${index}${ext}`;
+  }
+  return candidate;
 }

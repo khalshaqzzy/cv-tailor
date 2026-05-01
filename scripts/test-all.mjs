@@ -142,6 +142,20 @@ try {
   const renderCvLatex = runNode(['scripts/render-cv.mjs', 'examples/tailored-cv.latex.example.json', unifiedLatexPdfPath, '--engine=latex'], { timeout: 240000 });
   if (renderCvLatex.status === 0 && existsSync(unifiedLatexPdfPath) && statSync(unifiedLatexPdfPath).size > 0) pass('render-cv latex creates non-empty PDF');
   else fail(`render-cv latex failed: ${renderCvLatex.stdout}${renderCvLatex.stderr}`);
+  const renderCvLatexSecond = runNode(['scripts/render-cv.mjs', 'examples/tailored-cv.latex.example.json', unifiedLatexPdfPath, '--engine=latex'], { timeout: 240000 });
+  const versionedLatexPdfPath = unifiedLatexPdfPath.replace(/\.pdf$/i, '-v2.pdf');
+  const versionedLatexRawPath = unifiedLatexPdfPath.replace(/\.pdf$/i, '-v2.tex');
+  if (
+    renderCvLatexSecond.status === 0
+    && existsSync(versionedLatexPdfPath)
+    && statSync(versionedLatexPdfPath).size > 0
+    && existsSync(versionedLatexRawPath)
+    && statSync(versionedLatexRawPath).size > 0
+  ) {
+    pass('render-cv latex preserves prior PDFs and raw TeX versions');
+  } else {
+    fail(`render-cv latex versioning failed: ${renderCvLatexSecond.stdout}${renderCvLatexSecond.stderr}`);
+  }
 
   const manifest = runNode([
     'scripts/write-run-manifest.mjs',

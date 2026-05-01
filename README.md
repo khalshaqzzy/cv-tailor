@@ -331,7 +331,7 @@ The full workflow is intentionally conservative:
 | `npm run render-pdf -- <html> <pdf> --format=a4` | Render HTML to PDF using Playwright. |
 | `npm run render-latex -- <json> <tex>` | Render a tailored CV JSON file to the bundled LaTeX resume template. |
 | `npm run compile-latex -- <tex> <pdf>` | Compile LaTeX to PDF with bundled Tectonic on Windows. |
-| `npm run render-cv -- <json> <pdf> --engine=html\|latex` | Render a final PDF through the selected engine. |
+| `npm run render-cv -- <json> <pdf> --engine=html\|latex` | Render a final PDF through the selected engine, preserving prior versions by appending `-v2`, `-v3`, etc. |
 | `npm run ats-keyword-check -- <json> --job-dossier <job.json>` | Measure keyword coverage against a job dossier. |
 | `npm run check-liveness -- <url>` | Check whether a public job URL appears active, expired, or uncertain. |
 | `npm run write-run-manifest -- ...` | Record generated artifacts and approval state. |
@@ -453,6 +453,11 @@ the human review gate before final PDF generation.
 | --- | --- | --- |
 | `html` | Existing Playwright flow, web-style template, A4/Letter browser PDF output. | `npm run render-cv -- <json> <pdf> --engine=html --format=a4` |
 | `latex` | Compact engineering resume style matching the bundled LaTeX template. | `npm run render-cv -- <json> <pdf> --engine=latex` |
+
+Each render is version-safe by default. If the requested PDF already exists,
+`render-cv` writes the next available name such as `cv-acme-v2.pdf` and keeps
+the matching raw source file, such as `cv-acme-v2.tex` or `cv-acme-v2.html`.
+Use `--overwrite` only when intentionally replacing an artifact.
 
 The HTML template is intentionally plain and parser-friendly:
 

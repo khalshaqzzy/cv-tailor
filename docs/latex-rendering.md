@@ -30,6 +30,18 @@ npm run render-cv -- examples/tailored-cv.latex.example.json /tmp/cv-tailor-exam
 npm run render-cv -- examples/tailored-cv.example.json /tmp/cv-tailor-example.pdf --engine=html --format=a4
 ```
 
+`render-cv` is version-safe by default. If the requested PDF already exists, it
+writes the next available artifact name, for example:
+
+```text
+cv-tailor-example.pdf
+cv-tailor-example-v2.pdf
+cv-tailor-example-v2.tex
+```
+
+For LaTeX output, keep every generated `.tex` file with its matching PDF. Use
+`--overwrite` only when the user explicitly wants to replace an existing file.
+
 On Windows PowerShell, replace `/tmp/...` with a local path such as
 `$env:TEMP\cv-tailor-example.tex`.
 
