@@ -16,9 +16,11 @@
     "evaluationReport": ".cv-tailor/reports/20260430-acme-ai-senior-ai-platform-engineer.md",
     "tailoredCvJson": ".cv-tailor/runs/20260430-acme-ai-senior-ai-platform-engineer/tailored-cv.json",
     "html": ".cv-tailor/runs/20260430-acme-ai-senior-ai-platform-engineer/cv.html",
+    "tex": ".cv-tailor/runs/20260430-acme-ai-senior-ai-platform-engineer/cv.tex",
     "pdf": ".cv-tailor/output/cv-alex-chen-acme-ai-2026-04-30.pdf"
   },
   "verification": {
+    "renderer": "html",
     "pdfExists": true,
     "pdfSizeBytes": 72179
   }

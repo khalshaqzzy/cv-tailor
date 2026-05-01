@@ -51,11 +51,11 @@ truthful, CV Tailor gives Codex a workflow and tooling for:
 | Claim Validation | Tailored CV JSON is checked for approved generation and valid `sourceIds`. Unsupported claims fail validation. |
 | A-G Evaluation | Report structure adapted from Career Ops: role summary through posting legitimacy and human review choices. |
 | Story Bank | STAR+R story-bank template for reusable interview and resume proof points. |
-| ATS PDF | HTML-to-PDF rendering via Playwright with Space Grotesk + DM Sans, single-column layout, and ATS text normalization. |
+| ATS PDF | Choose HTML-to-PDF rendering via Playwright or LaTeX-to-PDF rendering via bundled Tectonic on Windows. |
 | Keyword Coverage | Checks tailored CV content against a job dossier or keyword list. |
 | Liveness Check | Playwright-based job URL active/expired classifier for posting legitimacy workflows. |
 | Run Manifests | Captures generated artifacts, approval state, job metadata, and PDF verification. |
-| Regression Suite | `npm run test-all` validates schemas, examples, runtime init, source ingestion, HTML/PDF rendering, liveness, and hygiene. |
+| Regression Suite | `npm run test-all` validates schemas, examples, runtime init, source ingestion, HTML/LaTeX PDF rendering, liveness, and hygiene. |
 
 ## Quick Start
 
@@ -271,7 +271,7 @@ The six stages are:
    project selection, gap framing, and PDF format before final generation.
 5. **Generate CV** - Produce `tailored-cv.json` with every meaningful bullet,
    competency, and project tied to known `sourceIds`.
-6. **Verify PDF** - Validate source references, render ATS-safe HTML/PDF, check
+6. **Verify PDF** - Validate source references, render ATS-safe HTML or LaTeX/PDF, check
    artifacts, and write a run manifest for traceability.
 
 ## Source-Backed Claim Model
@@ -315,7 +315,7 @@ The full workflow is intentionally conservative:
 5. **Evaluation** - Create an A-G report with match, gaps, strategy, and ATS keywords.
 6. **Human review** - Ask the user to approve positioning, project selection, gap framing, and PDF settings.
 7. **Tailored CV JSON** - Produce structured CV content with `sourceIds`.
-8. **Validation and rendering** - Validate claims, render HTML, create PDF, write manifest.
+8. **Validation and rendering** - Validate claims, ask for HTML or LaTeX renderer, create PDF, write manifest.
 
 ## Script Reference
 
@@ -329,6 +329,9 @@ The full workflow is intentionally conservative:
 | `npm run validate-tailored-cv -- <json>` | Validate tailored CV shape, approval, and source references. |
 | `npm run render-html -- <json> <html>` | Render a tailored CV JSON file to ATS-safe HTML. |
 | `npm run render-pdf -- <html> <pdf> --format=a4` | Render HTML to PDF using Playwright. |
+| `npm run render-latex -- <json> <tex>` | Render a tailored CV JSON file to the bundled LaTeX resume template. |
+| `npm run compile-latex -- <tex> <pdf>` | Compile LaTeX to PDF with bundled Tectonic on Windows. |
+| `npm run render-cv -- <json> <pdf> --engine=html\|latex` | Render a final PDF through the selected engine. |
 | `npm run ats-keyword-check -- <json> --job-dossier <job.json>` | Measure keyword coverage against a job dossier. |
 | `npm run check-liveness -- <url>` | Check whether a public job URL appears active, expired, or uncertain. |
 | `npm run write-run-manifest -- ...` | Record generated artifacts and approval state. |
@@ -346,6 +349,7 @@ The `examples/` directory contains fixtures adapted from the Career Ops style:
 | `examples/job-dossier.example.json` | Example job dossier and ATS keywords. |
 | `examples/evaluation-report.example.md` | Example A-G evaluation report. |
 | `examples/tailored-cv.example.json` | Valid source-backed tailored CV fixture. |
+| `examples/tailored-cv.latex.example.json` | Valid LaTeX-capable tailored CV fixture. |
 | `examples/unsupported-claim.example.json` | Negative fixture that should fail validation. |
 | `examples/run-manifest.example.json` | Example run manifest. |
 | `examples/codex-marketplace.local.example.json` | Local Codex marketplace registration example. |
@@ -367,6 +371,11 @@ npm run render-pdf -- \
   /tmp/cv-tailor-example.html \
   /tmp/cv-tailor-example.pdf \
   --format=a4
+
+npm run render-cv -- \
+  examples/tailored-cv.latex.example.json \
+  /tmp/cv-tailor-example-latex.pdf \
+  --engine=latex
 
 npm run ats-keyword-check -- \
   examples/tailored-cv.example.json \
@@ -394,7 +403,11 @@ cv-tailor/
     install-codex-local.mjs
     init.mjs
     render-html.mjs
+    render-latex.mjs
     render-pdf.mjs
+    render-cv.mjs
+    compile-latex.mjs
+    tectonic-path.mjs
     test-all.mjs
     validate-tailored-cv.mjs
     verify.mjs
@@ -409,11 +422,14 @@ cv-tailor/
     run-manifest.schema.json
   templates/
     cv-template.html
+    cv-template.tex
     profile.example.yml
     source-registry.example.json
     story-bank.template.md
   examples/
   docs/
+  bin/
+    tectonic.exe
   fonts/
   assets/
 ```
@@ -427,9 +443,17 @@ CV Tailor follows the same separation principle as Career Ops:
 | Plugin/system layer | `skills/`, `scripts/`, `schemas/`, `templates/`, `examples/`, `fonts/`, `assets/` | Safe to version and update. No private user data. |
 | User/runtime layer | `.cv-tailor/profile.yml`, `.cv-tailor/source-registry.json`, `.cv-tailor/sources/`, `.cv-tailor/reports/`, `.cv-tailor/output/`, `.cv-tailor/runs/` | Private workspace data. Do not commit by default. |
 
-## ATS PDF Design
+## PDF Rendering
 
-The default template is intentionally plain and parser-friendly:
+CV Tailor supports two final rendering paths. The user should choose one during
+the human review gate before final PDF generation.
+
+| Renderer | Best for | Command |
+| --- | --- | --- |
+| `html` | Existing Playwright flow, web-style template, A4/Letter browser PDF output. | `npm run render-cv -- <json> <pdf> --engine=html --format=a4` |
+| `latex` | Compact engineering resume style matching the bundled LaTeX template. | `npm run render-cv -- <json> <pdf> --engine=latex` |
+
+The HTML template is intentionally plain and parser-friendly:
 
 - Single-column layout.
 - Standard section names.
@@ -439,6 +463,18 @@ The default template is intentionally plain and parser-friendly:
 - Self-hosted `.woff2` fonts.
 - ASCII-safe normalization for smart quotes, dashes, zero-width characters, and non-breaking spaces.
 - A4 or Letter output through Playwright.
+
+The LaTeX template preserves the supplied resume structure:
+
+- Education, Work Experience, Projects, Leadership, Technical Skills.
+- Compact bullets, dense technical phrasing, and `\textbf{}` emphasis for technologies, metrics, and outcomes.
+- Empty sections are skipped instead of rendered with placeholders.
+- Windows Tectonic `0.16.9` is bundled under `bin/tectonic.exe`.
+- No system TeX installation or external Codex LaTeX plugin is required for the
+  Windows LaTeX path.
+
+See [docs/latex-rendering.md](docs/latex-rendering.md) for compiler details and
+troubleshooting.
 
 ## Human-In-The-Loop Rules
 
@@ -451,6 +487,7 @@ for user approval before final PDF generation when the CV changes:
 - awards, publications, certifications, or credentials
 - gap framing
 - page format or length target
+- final renderer: HTML/Playwright or LaTeX/Tectonic
 
 Even if the user asks to generate without review, unsupported or ambiguous
 claims must be resolved before rendering the final PDF.
@@ -491,6 +528,7 @@ The suite checks:
 - runtime workspace initialization
 - source ingestion
 - HTML and PDF rendering
+- LaTeX rendering and bundled Tectonic compilation
 - run manifest writing
 - ATS keyword coverage
 - liveness classification

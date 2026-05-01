@@ -95,6 +95,70 @@ export function htmlEscape(value) {
     .replace(/'/g, '&#39;');
 }
 
+export function renderMarkdownEmphasisHtml(value) {
+  const parts = splitMarkdownEmphasis(value);
+  return parts.map((part) => {
+    const escaped = htmlEscape(part.text);
+    return part.bold ? `<strong>${escaped}</strong>` : escaped;
+  }).join('');
+}
+
+export function latexEscape(value) {
+  return String(value ?? '')
+    .replace(/\\/g, '\\textbackslash{}')
+    .replace(/&/g, '\\&')
+    .replace(/%/g, '\\%')
+    .replace(/\$/g, '\\$')
+    .replace(/#/g, '\\#')
+    .replace(/_/g, '\\_')
+    .replace(/{/g, '\\{')
+    .replace(/}/g, '\\}')
+    .replace(/~/g, '\\textasciitilde{}')
+    .replace(/\^/g, '\\textasciicircum{}');
+}
+
+export function latexUrlEscape(value) {
+  return String(value ?? '')
+    .replace(/\\/g, '/')
+    .replace(/&/g, '\\&')
+    .replace(/%/g, '\\%')
+    .replace(/#/g, '\\#')
+    .replace(/_/g, '\\_')
+    .replace(/{/g, '\\{')
+    .replace(/}/g, '\\}');
+}
+
+export function renderMarkdownEmphasisLatex(value) {
+  const parts = splitMarkdownEmphasis(value);
+  return parts.map((part) => {
+    const escaped = latexEscape(part.text);
+    return part.bold ? `\\textbf{${escaped}}` : escaped;
+  }).join('');
+}
+
+export function stripMarkdownEmphasis(value) {
+  return splitMarkdownEmphasis(value).map((part) => part.text).join('');
+}
+
+function splitMarkdownEmphasis(value) {
+  const text = String(value ?? '');
+  const parts = [];
+  const pattern = /\*\*([^*\n][\s\S]*?[^*\n]|[^*\n])\*\*/g;
+  let lastIndex = 0;
+  let match;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > lastIndex) {
+      parts.push({ text: text.slice(lastIndex, match.index), bold: false });
+    }
+    parts.push({ text: match[1], bold: true });
+    lastIndex = pattern.lastIndex;
+  }
+  if (lastIndex < text.length) {
+    parts.push({ text: text.slice(lastIndex), bold: false });
+  }
+  return parts;
+}
+
 export function fileUrl(path) {
   return pathToFileURL(path).href;
 }

@@ -51,16 +51,16 @@ if (verify.status === 0) pass('verify.mjs passes');
 else fail(`verify.mjs failed: ${verify.stdout}${verify.stderr}`);
 
 console.log('\n2. Schema validation');
-const ajv = new Ajv2020({ allErrors: true, strict: false });
 for (const [schemaFile, exampleFile] of [
   ['source-registry.schema.json', 'source-registry.example.json'],
   ['job-dossier.schema.json', 'job-dossier.example.json'],
   ['run-manifest.schema.json', 'run-manifest.example.json'],
-  ['tailored-cv.schema.json', 'tailored-cv.example.json']
+  ['tailored-cv.schema.json', 'tailored-cv.example.json'],
+  ['tailored-cv.schema.json', 'tailored-cv.latex.example.json']
 ]) {
   const schema = readJson(join(pluginRoot, 'schemas', schemaFile));
   const example = readJson(join(pluginRoot, 'examples', exampleFile));
-  const validate = ajv.compile(schema);
+  const validate = new Ajv2020({ allErrors: true, strict: false }).compile(schema);
   if (validate(example)) pass(`${exampleFile} matches ${schemaFile}`);
   else fail(`${exampleFile} schema errors: ${JSON.stringify(validate.errors)}`);
 }
@@ -70,6 +70,11 @@ const tailoredCv = readJson(join(pluginRoot, 'examples/tailored-cv.example.json'
 const tailoredValidation = validateTailoredCv(tailoredCv, sourceRegistry);
 if (tailoredValidation.ok) pass('source-backed tailored CV validates');
 else fail(`source-backed tailored CV failed: ${tailoredValidation.errors.join('; ')}`);
+
+const latexCv = readJson(join(pluginRoot, 'examples/tailored-cv.latex.example.json'));
+const latexValidation = validateTailoredCv(latexCv, sourceRegistry);
+if (latexValidation.ok) pass('LaTeX source-backed tailored CV validates');
+else fail(`LaTeX source-backed tailored CV failed: ${latexValidation.errors.join('; ')}`);
 
 const unsupported = readJson(join(pluginRoot, 'examples/unsupported-claim.example.json'));
 const unsupportedValidation = validateTailoredCv(unsupported, sourceRegistry);
@@ -97,6 +102,10 @@ try {
 
   const htmlPath = join(workspace, '.cv-tailor/runs/example/cv.html');
   const pdfPath = join(workspace, '.cv-tailor/output/example.pdf');
+  const latexPath = join(workspace, '.cv-tailor/runs/example/cv.tex');
+  const latexPdfPath = join(workspace, '.cv-tailor/output/example-latex.pdf');
+  const unifiedHtmlPdfPath = join(workspace, '.cv-tailor/output/example-render-cv-html.pdf');
+  const unifiedLatexPdfPath = join(workspace, '.cv-tailor/output/example-render-cv-latex.pdf');
   const renderHtml = runNode(['scripts/render-html.mjs', 'examples/tailored-cv.example.json', htmlPath]);
   if (renderHtml.status === 0 && existsSync(htmlPath)) pass('render-html creates HTML');
   else fail(`render-html failed: ${renderHtml.stdout}${renderHtml.stderr}`);
@@ -105,12 +114,43 @@ try {
   if (renderPdf.status === 0 && existsSync(pdfPath) && statSync(pdfPath).size > 0) pass('render-pdf creates non-empty PDF');
   else fail(`render-pdf failed: ${renderPdf.stdout}${renderPdf.stderr}`);
 
+  const renderLatex = runNode(['scripts/render-latex.mjs', 'examples/tailored-cv.latex.example.json', latexPath]);
+  if (renderLatex.status === 0 && existsSync(latexPath)) pass('render-latex creates TeX');
+  else fail(`render-latex failed: ${renderLatex.stdout}${renderLatex.stderr}`);
+  const latexOutput = existsSync(latexPath) ? readFileSync(latexPath, 'utf8') : '';
+  if (latexOutput.includes('\\textbf{custom evaluation metrics}') && latexOutput.includes('100\\%') && latexOutput.includes('Python\\_A \\& Python\\_B')) {
+    pass('LaTeX renderer converts emphasis and escapes special characters');
+  } else {
+    fail('LaTeX renderer did not convert emphasis or escape special characters as expected');
+  }
+  if (latexOutput.includes('\\href{https://github.com/alexchen/llm-eval-toolkit}{Source Code}') && latexOutput.includes('{Python $|$ LLM evals $|$ CI}')) {
+    pass('LaTeX renderer matches project link and tech separator style');
+  } else {
+    fail('LaTeX renderer did not match project link or tech separator style');
+  }
+  if (!latexOutput.includes('\\section{Leadership}')) pass('LaTeX renderer skips empty sections');
+  else fail('LaTeX renderer rendered an empty Leadership section');
+
+  const compileLatex = runNode(['scripts/compile-latex.mjs', latexPath, latexPdfPath], { timeout: 240000 });
+  if (compileLatex.status === 0 && existsSync(latexPdfPath) && statSync(latexPdfPath).size > 0) pass('compile-latex creates non-empty PDF');
+  else fail(`compile-latex failed: ${compileLatex.stdout}${compileLatex.stderr}`);
+
+  const renderCvHtml = runNode(['scripts/render-cv.mjs', 'examples/tailored-cv.example.json', unifiedHtmlPdfPath, '--engine=html', '--format=a4'], { timeout: 120000 });
+  if (renderCvHtml.status === 0 && existsSync(unifiedHtmlPdfPath) && statSync(unifiedHtmlPdfPath).size > 0) pass('render-cv html creates non-empty PDF');
+  else fail(`render-cv html failed: ${renderCvHtml.stdout}${renderCvHtml.stderr}`);
+
+  const renderCvLatex = runNode(['scripts/render-cv.mjs', 'examples/tailored-cv.latex.example.json', unifiedLatexPdfPath, '--engine=latex'], { timeout: 240000 });
+  if (renderCvLatex.status === 0 && existsSync(unifiedLatexPdfPath) && statSync(unifiedLatexPdfPath).size > 0) pass('render-cv latex creates non-empty PDF');
+  else fail(`render-cv latex failed: ${renderCvLatex.stdout}${renderCvLatex.stderr}`);
+
   const manifest = runNode([
     'scripts/write-run-manifest.mjs',
     '--workspace', workspace,
     '--tailored-cv', join(pluginRoot, 'examples/tailored-cv.example.json'),
     '--html', htmlPath,
+    '--tex', latexPath,
     '--pdf', pdfPath,
+    '--renderer', 'html',
     '--approved'
   ]);
   if (manifest.status === 0) pass('write-run-manifest creates manifest');

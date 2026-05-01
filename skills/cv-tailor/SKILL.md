@@ -20,6 +20,7 @@ automation.
 - Never invent experience, metrics, employers, credentials, awards, publications, or dates.
 - Every tailored achievement must be grounded in a known source from `.cv-tailor/source-registry.json` or a user-provided source in the current chat.
 - Ask for user approval before final PDF generation when tailoring choices materially affect positioning, section order, project selection, or gap framing.
+- Ask the user to choose the final renderer for each PDF run: HTML/Playwright or LaTeX/Tectonic.
 - Do not scrape LinkedIn behind authentication. Prefer pasted profile text, exported profile PDF/text, or user-approved visible browser context.
 - Never submit an application or click a final submit/send/apply button.
 
@@ -126,9 +127,10 @@ be inferred.
 ### `pdf`
 
 - **Goal:** Render an already-approved tailored CV JSON/HTML into an ATS PDF.
-- **Read:** Approved `tailored-cv.json`, source registry, HTML template, fonts.
-- **Write:** `.cv-tailor/runs/{run-id}/cv.html` and `.cv-tailor/output/*.pdf`.
-- **Run:** `validate-tailored-cv`, then `render-html`, then `render-pdf`.
+- **Read:** Approved `tailored-cv.json`, source registry, HTML template, LaTeX template, fonts, and bundled Tectonic on Windows.
+- **Write:** HTML or TeX intermediate files plus `.cv-tailor/output/*.pdf`.
+- **Ask:** If the user has not already chosen, ask whether to render with HTML/Playwright or LaTeX/Tectonic.
+- **Run:** `validate-tailored-cv`, then `render-cv -- --engine=html|latex`, or the explicit renderer scripts.
 - **Stop when:** The PDF exists, is non-empty, and the run manifest records the output.
 
 ### `story-bank`
@@ -274,6 +276,7 @@ user to approve or adjust:
 - gap framing
 - paper format (`a4` or `letter`)
 - one-page vs two-page target when relevant
+- final renderer: `html` for the existing Playwright flow, or `latex` for the compact engineering resume template
 
 If the user says "generate without asking", still stop for approval when:
 
@@ -281,6 +284,7 @@ If the user says "generate without asking", still stop for approval when:
 - a title, employer, date, credential, award, publication, or metric is newly inferred
 - a gap is being reframed as experience
 - the CV would omit a major role or materially change seniority positioning
+- the final renderer has not been selected
 
 Do not render the final PDF until these choices are settled. Never treat the
 approval gate as permission to submit an application.
@@ -291,6 +295,10 @@ Create `.cv-tailor/runs/{run-id}/tailored-cv.json` using
 `schemas/tailored-cv.schema.json` as the target shape.
 
 Every bullet or substantial claim must include `sourceIds`.
+When the final renderer is selected, set `metadata.renderEngine` to `html` or
+`latex`. Use Markdown emphasis such as `**Python**`, `**37%**`, or
+`**LLM evaluation**` for scan-critical terms; renderers convert this to
+`<strong>` or `\textbf{}`.
 
 Validate:
 
@@ -298,9 +306,23 @@ Validate:
 npm --prefix <plugin-root> run validate-tailored-cv -- <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json --workspace <workspace-root>
 ```
 
-### 7. Render HTML And PDF
+### 7. Render PDF
 
-Render HTML:
+Use the renderer approved by the user.
+
+Unified rendering:
+
+```bash
+npm --prefix <plugin-root> run render-cv -- <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --engine=html --format=a4
+```
+
+For LaTeX:
+
+```bash
+npm --prefix <plugin-root> run render-cv -- <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --engine=latex
+```
+
+Explicit HTML steps:
 
 ```bash
 npm --prefix <plugin-root> run render-html -- <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json <workspace-root>/.cv-tailor/runs/{run-id}/cv.html
@@ -312,6 +334,13 @@ Render PDF:
 npm --prefix <plugin-root> run render-pdf -- <workspace-root>/.cv-tailor/runs/{run-id}/cv.html <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --format=a4
 ```
 
+Explicit LaTeX steps:
+
+```bash
+npm --prefix <plugin-root> run render-latex -- <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json <workspace-root>/.cv-tailor/runs/{run-id}/cv.tex
+npm --prefix <plugin-root> run compile-latex -- <workspace-root>/.cv-tailor/runs/{run-id}/cv.tex <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf
+```
+
 Check ATS keyword coverage when a job dossier or keyword list exists:
 
 ```bash
@@ -321,7 +350,7 @@ npm --prefix <plugin-root> run ats-keyword-check -- <workspace-root>/.cv-tailor/
 Update the run manifest after generation:
 
 ```bash
-npm --prefix <plugin-root> run write-run-manifest -- --workspace <workspace-root> --tailored-cv <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json --html <workspace-root>/.cv-tailor/runs/{run-id}/cv.html --pdf <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --approved
+npm --prefix <plugin-root> run write-run-manifest -- --workspace <workspace-root> --tailored-cv <workspace-root>/.cv-tailor/runs/{run-id}/tailored-cv.json --html <workspace-root>/.cv-tailor/runs/{run-id}/cv.html --tex <workspace-root>/.cv-tailor/runs/{run-id}/cv.tex --pdf <workspace-root>/.cv-tailor/output/cv-{candidate}-{company}-{date}.pdf --renderer <html|latex> --approved
 ```
 
 ### 8. Verification
@@ -367,9 +396,27 @@ conservatively.
 - Use standard section names: Professional Summary, Core Competencies, Work Experience, Projects, Education, Certifications, Skills.
 - Use single-column layout, selectable text, no images for critical information.
 - Use action verbs and concrete proof.
+- Prefer compact technical delivery: "Engineered X using Y, improving Z by N" over broad responsibility statements.
+- Use Markdown emphasis around scan-critical technologies, metrics, and outcomes, but do not bold ordinary filler.
 - Avoid "passionate about", "results-oriented", "proven track record", "leveraged", "spearheaded", "synergies", "cutting-edge", and generic filler.
 - Keyword injection must be truthful: translate user evidence into the JD's vocabulary without adding fake skills.
 - Prefer ASCII punctuation in generated CV text for ATS compatibility.
+
+## LaTeX Resume Style
+
+Use this style for both renderers, because the writing quality should be
+renderer-neutral.
+
+- Write dense, technical, achievement-led bullets similar to the bundled LaTeX sample.
+- Start bullets with precise verbs such as Engineered, Analyzed, Integrated, Designed, Implemented, Programmed, Centralized, Built, Developed, Shipped, Automated.
+- Include technologies in bold only when they matter for recruiter scan or ATS match.
+- Include metrics only when sourced: counts, money, percentages, users, latency, throughput, deployment time, or recurring operations scale.
+- Prefer one-line bullets; allow two lines only for high-value evidence.
+- Preserve exact titles, organizations, dates, awards, schools, and credentials from sources.
+- Do not manufacture internships, work experience, metrics, GPA, graduation dates, or course names.
+- For LaTeX output, preserve section order: Education, Work Experience, Projects, Leadership, Technical Skills.
+- Skip LaTeX sections with no source-backed content; do not render "N/A" placeholders.
+- Use `metadata.renderEngine = "latex"` only after the user chooses the LaTeX renderer.
 
 ## CV Content Generation
 

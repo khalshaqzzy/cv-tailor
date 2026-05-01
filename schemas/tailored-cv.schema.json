@@ -35,6 +35,7 @@
       "properties": {
         "approvedByUser": { "type": "boolean" },
         "paperFormat": { "type": "string", "enum": ["a4", "letter"] },
+        "renderEngine": { "type": "string", "enum": ["html", "latex"] },
         "language": { "type": "string", "default": "en" },
         "generatedAt": { "type": "string" }
       },
@@ -56,8 +57,11 @@
         "competencies": { "type": "array", "items": { "$ref": "#/$defs/claim" } },
         "experience": { "type": "array", "items": { "$ref": "#/$defs/position" } },
         "projects": { "type": "array", "items": { "$ref": "#/$defs/project" } },
+        "leadership": { "type": "array", "items": { "$ref": "#/$defs/leadershipItem" } },
         "education": { "type": "array", "items": { "$ref": "#/$defs/simpleItem" } },
         "certifications": { "type": "array", "items": { "$ref": "#/$defs/simpleItem" } },
+        "awards": { "type": "array", "items": { "$ref": "#/$defs/simpleItem" } },
+        "publications": { "type": "array", "items": { "$ref": "#/$defs/simpleItem" } },
         "skills": { "type": "array", "items": { "$ref": "#/$defs/skillGroup" } }
       },
       "additionalProperties": true
@@ -100,6 +104,49 @@
         "name": { "type": "string" },
         "description": { "type": "string" },
         "tech": { "type": "string" },
+        "period": { "type": "string" },
+        "website": { "type": "string" },
+        "github": { "type": "string" },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "properties": {
+              "label": { "type": "string" },
+              "url": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "bullets": { "type": "array", "items": { "$ref": "#/$defs/bullet" } },
+        "sourceIds": { "$ref": "#/$defs/sourceIds" }
+      },
+      "additionalProperties": true
+    },
+    "leadershipItem": {
+      "type": "object",
+      "required": ["sourceIds"],
+      "properties": {
+        "name": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "period": { "type": "string" },
+        "website": { "type": "string" },
+        "github": { "type": "string" },
+        "links": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["label", "url"],
+            "properties": {
+              "label": { "type": "string" },
+              "url": { "type": "string" }
+            },
+            "additionalProperties": true
+          }
+        },
+        "bullets": { "type": "array", "items": { "$ref": "#/$defs/bullet" } },
         "sourceIds": { "$ref": "#/$defs/sourceIds" }
       },
       "additionalProperties": true
@@ -111,6 +158,9 @@
         "title": { "type": "string" },
         "subtitle": { "type": "string" },
         "period": { "type": "string" },
+        "location": { "type": "string" },
+        "coursework": { "type": "array", "items": { "type": "string" } },
+        "bullets": { "type": "array", "items": { "$ref": "#/$defs/bullet" } },
         "sourceIds": { "$ref": "#/$defs/sourceIds" }
       },
       "additionalProperties": true

@@ -31,14 +31,22 @@ if (manifest) {
 }
 
 requireJson(join(pluginRoot, 'package.json'), 'package.json');
+requireFile(join(pluginRoot, 'THIRD_PARTY_NOTICES.md'), 'third-party notices');
 requireFile(join(pluginRoot, 'skills', 'cv-tailor', 'SKILL.md'), 'cv-tailor skill');
 requireFile(join(pluginRoot, 'templates', 'cv-template.html'), 'CV HTML template');
+requireFile(join(pluginRoot, 'templates', 'cv-template.tex'), 'CV LaTeX template');
 requireFile(join(pluginRoot, 'templates', 'profile.example.yml'), 'profile template');
 requireFile(join(pluginRoot, 'templates', 'story-bank.template.md'), 'story bank template');
 requireFile(join(pluginRoot, 'docs', 'install-codex-local.md'), 'Codex local install docs');
 requireFile(join(pluginRoot, 'docs', 'privacy.md'), 'privacy policy docs');
 requireFile(join(pluginRoot, 'docs', 'terms.md'), 'terms docs');
 requireFile(join(pluginRoot, 'docs', 'security.md'), 'security docs');
+requireFile(join(pluginRoot, 'docs', 'latex-rendering.md'), 'LaTeX rendering docs');
+requireFile(join(pluginRoot, 'scripts', 'tectonic-path.mjs'), 'Tectonic path helper');
+requireFile(join(pluginRoot, 'scripts', 'render-latex.mjs'), 'LaTeX renderer script');
+requireFile(join(pluginRoot, 'scripts', 'compile-latex.mjs'), 'LaTeX compile script');
+requireFile(join(pluginRoot, 'scripts', 'render-cv.mjs'), 'dual renderer script');
+requireFile(join(pluginRoot, 'bin', 'tectonic.exe'), 'bundled Windows Tectonic executable');
 
 for (const schema of [
   'profile.schema.json',
@@ -65,6 +73,7 @@ if (!gitignore.split(/\r?\n/).includes('.cv-tailor/')) {
 }
 
 const exampleCv = requireJson(join(pluginRoot, 'examples', 'tailored-cv.example.json'), 'example tailored CV');
+const latexExampleCv = requireJson(join(pluginRoot, 'examples', 'tailored-cv.latex.example.json'), 'example LaTeX tailored CV');
 const exampleRegistry = requireJson(join(pluginRoot, 'examples', 'source-registry.example.json'), 'example source registry');
 const localMarketplace = requireJson(join(pluginRoot, 'examples', 'codex-marketplace.local.example.json'), 'local marketplace example');
 if (localMarketplace) {
@@ -86,12 +95,19 @@ if (exampleCv && exampleRegistry) {
     errors.push(...validation.errors.map((error) => `example tailored CV: ${error}`));
   }
 }
+if (latexExampleCv && exampleRegistry) {
+  const validation = validateTailoredCv(latexExampleCv, exampleRegistry);
+  if (!validation.ok) {
+    errors.push(...validation.errors.map((error) => `example LaTeX tailored CV: ${error}`));
+  }
+}
 
 const ajv = new Ajv2020({ allErrors: true, strict: false });
 for (const [schemaFile, exampleFile, label] of [
   ['source-registry.schema.json', 'source-registry.example.json', 'source registry example'],
   ['job-dossier.schema.json', 'job-dossier.example.json', 'job dossier example'],
-  ['run-manifest.schema.json', 'run-manifest.example.json', 'run manifest example']
+  ['run-manifest.schema.json', 'run-manifest.example.json', 'run manifest example'],
+  ['tailored-cv.schema.json', 'tailored-cv.latex.example.json', 'LaTeX tailored CV example']
 ]) {
   const schema = requireJson(join(pluginRoot, 'schemas', schemaFile), schemaFile);
   const example = requireJson(join(pluginRoot, 'examples', exampleFile), label);

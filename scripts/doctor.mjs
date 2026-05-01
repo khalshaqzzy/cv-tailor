@@ -3,6 +3,7 @@
 import { existsSync, readFileSync, readdirSync } from 'fs';
 import { homedir } from 'os';
 import { join, resolve } from 'path';
+import { spawnSync } from 'child_process';
 import { parseArgs, pluginRoot, runtimePaths } from './lib/workspace.mjs';
 
 const args = parseArgs();
@@ -22,7 +23,10 @@ add('Node.js >= 18', nodeMajor() >= 18, 'Install Node.js 18 or newer.');
 add('plugin manifest', existsSync(join(pluginRoot, '.codex-plugin', 'plugin.json')), 'Missing .codex-plugin/plugin.json.');
 add('cv-tailor skill', existsSync(join(pluginRoot, 'skills', 'cv-tailor', 'SKILL.md')), 'Missing skills/cv-tailor/SKILL.md.');
 add('CV template', existsSync(join(pluginRoot, 'templates', 'cv-template.html')), 'Missing templates/cv-template.html.');
+add('LaTeX CV template', existsSync(join(pluginRoot, 'templates', 'cv-template.tex')), 'Missing templates/cv-template.tex.');
 add('tailored CV schema', existsSync(join(pluginRoot, 'schemas', 'tailored-cv.schema.json')), 'Missing schemas/tailored-cv.schema.json.');
+add('LaTeX render script', existsSync(join(pluginRoot, 'scripts', 'render-latex.mjs')), 'Missing scripts/render-latex.mjs.');
+add('LaTeX compile script', existsSync(join(pluginRoot, 'scripts', 'compile-latex.mjs')), 'Missing scripts/compile-latex.mjs.');
 
 const fontsDir = join(pluginRoot, 'fonts');
 const fontsReady = existsSync(fontsDir) && readdirSync(fontsDir).some((file) => file.endsWith('.woff2'));
@@ -34,6 +38,17 @@ try {
   add('Playwright Chromium installed', existsSync(chromium.executablePath()), 'Run npx playwright install chromium.');
 } catch {
   add('Playwright import', false, 'Run npm install.');
+}
+
+const tectonicPath = join(pluginRoot, 'bin', process.platform === 'win32' ? 'tectonic.exe' : 'tectonic');
+if (process.platform === 'win32') {
+  add('bundled Tectonic executable', existsSync(tectonicPath), 'Copy Tectonic 0.16.9 to bin/tectonic.exe.');
+  if (existsSync(tectonicPath)) {
+    const version = spawnSync(tectonicPath, ['--version'], { encoding: 'utf8' });
+    add('bundled Tectonic runs', version.status === 0 && /Tectonic 0\.16\.9/.test(version.stdout), 'Bundled Tectonic should report version 0.16.9.');
+  }
+} else {
+  add('LaTeX renderer platform fallback', true, 'Bundled Tectonic is currently Windows-only; use HTML renderer on this platform.');
 }
 
 if (args.workspace) {

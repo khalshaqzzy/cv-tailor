@@ -2,7 +2,14 @@
 
 import { mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { dirname, join } from 'path';
-import { htmlEscape, normalizeTextForATS, parseArgs, pluginRoot, readJson } from './lib/workspace.mjs';
+import {
+  htmlEscape,
+  normalizeTextForATS,
+  parseArgs,
+  pluginRoot,
+  readJson,
+  renderMarkdownEmphasisHtml
+} from './lib/workspace.mjs';
 
 function contactItem(label, href) {
   if (!label) return '';
@@ -13,7 +20,7 @@ function contactItem(label, href) {
 
 function renderBullets(bullets = []) {
   if (!bullets.length) return '';
-  return `<ul>${bullets.map((bullet) => `<li>${htmlEscape(bullet.text)}</li>`).join('')}</ul>`;
+  return `<ul>${bullets.map((bullet) => `<li>${renderMarkdownEmphasisHtml(bullet.text)}</li>`).join('')}</ul>`;
 }
 
 function renderExperience(items = []) {
@@ -37,7 +44,8 @@ function renderProjects(items = []) {
         <div class="item-title">${htmlEscape(item.name)}</div>
         <div class="item-meta">${htmlEscape(item.tech || '')}</div>
       </div>
-      <div>${htmlEscape(item.description || '')}</div>
+      <div>${renderMarkdownEmphasisHtml(item.description || '')}</div>
+      ${renderBullets(item.bullets)}
     </article>
   `).join('');
 }
@@ -50,7 +58,8 @@ function renderSimpleItems(items = []) {
         <div class="item-title">${htmlEscape(item.title)}</div>
         <div class="item-meta">${htmlEscape(item.period || '')}</div>
       </div>
-      ${item.subtitle ? `<div>${htmlEscape(item.subtitle)}</div>` : ''}
+      ${item.subtitle ? `<div>${renderMarkdownEmphasisHtml(item.subtitle)}</div>` : ''}
+      ${renderBullets(item.bullets)}
     </article>
   `).join('');
 }
@@ -58,14 +67,14 @@ function renderSimpleItems(items = []) {
 function renderSkills(items = []) {
   return items.map((group) => {
     const skills = Array.isArray(group.items) ? group.items.join(', ') : '';
-    return `<span class="skill"><strong>${htmlEscape(group.category)}:</strong> ${htmlEscape(skills)}</span>`;
+    return `<span class="skill"><strong>${htmlEscape(group.category)}:</strong> ${renderMarkdownEmphasisHtml(skills)}</span>`;
   }).join('');
 }
 
 function renderCompetencies(items = []) {
   return items.map((item) => {
     const text = typeof item === 'string' ? item : item.text;
-    return `<span class="tag">${htmlEscape(text)}</span>`;
+    return `<span class="tag">${renderMarkdownEmphasisHtml(text)}</span>`;
   }).join('');
 }
 
@@ -89,7 +98,7 @@ function renderHtml(cv) {
     '{{PAGE_WIDTH}}': format,
     '{{NAME}}': htmlEscape(candidate.name),
     '{{CONTACT_ITEMS}}': contacts,
-    '{{SUMMARY_TEXT}}': htmlEscape(sections.summary?.text || ''),
+    '{{SUMMARY_TEXT}}': renderMarkdownEmphasisHtml(sections.summary?.text || ''),
     '{{COMPETENCIES}}': renderCompetencies(sections.competencies || []),
     '{{EXPERIENCE}}': renderExperience(sections.experience || []),
     '{{PROJECTS}}': renderProjects(sections.projects || []),

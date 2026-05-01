@@ -10,7 +10,7 @@ const paths = runtimePaths(workspace);
 const tailoredCvPath = args['tailored-cv'] || args._[0];
 
 if (!tailoredCvPath) {
-  console.error('Usage: node scripts/write-run-manifest.mjs --workspace <path> --tailored-cv <json> [--html <path>] [--pdf <path>] [--report <path>] [--approved]');
+  console.error('Usage: node scripts/write-run-manifest.mjs --workspace <path> --tailored-cv <json> [--html <path>] [--tex <path>] [--pdf <path>] [--renderer html|latex] [--report <path>] [--approved]');
   process.exit(1);
 }
 
@@ -42,9 +42,11 @@ const manifest = {
     evaluationReport: rel(args.report),
     tailoredCvJson: rel(tailoredCvPath),
     html: rel(args.html),
+    tex: rel(args.tex),
     pdf: rel(args.pdf)
   },
   verification: {
+    renderer: args.renderer || cv.metadata?.renderEngine || 'html',
     pdfExists: pdfPath ? existsSync(pdfPath) : false,
     pdfSizeBytes: pdfPath && existsSync(pdfPath) ? statSync(pdfPath).size : 0
   }

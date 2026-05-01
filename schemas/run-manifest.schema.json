@@ -33,6 +33,7 @@
         "evaluationReport": { "type": "string" },
         "tailoredCvJson": { "type": "string" },
         "html": { "type": "string" },
+        "tex": { "type": "string" },
         "pdf": { "type": "string" }
       },
       "additionalProperties": true
