@@ -21,6 +21,7 @@ automation.
 - Every tailored achievement must be grounded in a known source from `.cv-tailor/source-registry.json` or a user-provided source in the current chat.
 - Ask for user approval before final PDF generation when tailoring choices materially affect positioning, section order, project selection, or gap framing.
 - Ask the user to choose the final renderer for each PDF run: HTML/Playwright or LaTeX/Tectonic.
+- Treat `examples/latex-reference-template.tex` as the source-of-truth example for LaTeX section structure, spacing, heading patterns, project link formatting, skill grouping, and compact technical language.
 - Do not scrape LinkedIn behind authentication. Prefer pasted profile text, exported profile PDF/text, or user-approved visible browser context.
 - Never submit an application or click a final submit/send/apply button.
 
@@ -278,6 +279,14 @@ user to approve or adjust:
 - one-page vs two-page target when relevant
 - final renderer: `html` for the existing Playwright flow, or `latex` for the compact engineering resume template
 
+Renderer decision contract:
+
+- Ask before final PDF generation unless `metadata.renderEngine` is already set.
+- Recommend `latex` for compact technical/engineering resumes, internship resumes, student project-heavy profiles, and resumes where a dense one-page engineering format is preferred.
+- Recommend `html` for broader ATS-safe CVs, longer summaries, less technical roles, or users who want the existing visual style.
+- Record the choice in `metadata.renderEngine`.
+- Apply the same source-backed writing and evidence rules before either renderer is selected.
+
 If the user says "generate without asking", still stop for approval when:
 
 - a claim is unsupported or ambiguous
@@ -407,6 +416,7 @@ conservatively.
 Use this style for both renderers, because the writing quality should be
 renderer-neutral.
 
+- Use `examples/latex-reference-template.tex` as the reference for full text content shape, section order, project heading style, skills formatting, bolding density, and line economy.
 - Write dense, technical, achievement-led bullets similar to the bundled LaTeX sample.
 - Start bullets with precise verbs such as Engineered, Analyzed, Integrated, Designed, Implemented, Programmed, Centralized, Built, Developed, Shipped, Automated.
 - Include technologies in bold only when they matter for recruiter scan or ATS match.
@@ -417,6 +427,78 @@ renderer-neutral.
 - For LaTeX output, preserve section order: Education, Work Experience, Projects, Leadership, Technical Skills.
 - Skip LaTeX sections with no source-backed content; do not render "N/A" placeholders.
 - Use `metadata.renderEngine = "latex"` only after the user chooses the LaTeX renderer.
+
+### LaTeX Content Shape
+
+For LaTeX output, shape `tailored-cv.json` into the template's exact resume
+structure:
+
+1. **Education** - `sections.education[]` maps to `\resumeSubheading{School}{Period}{Degree}{Location}` followed by optional bullet items such as GPA, honors, and coursework.
+2. **Work Experience** - `sections.experience[]` maps to `\resumeSubheading{Company}{Period}{Role}{Location}` followed by `\resumeItem` bullets. If the user has no real work experience, omit the section and strengthen Projects, Leadership, Awards, and Technical Skills.
+3. **Projects** - `sections.projects[]` maps to `\resumeProjectHeading{Project + links}{Tech stack}`. Keep project links in the heading, not in bullets.
+4. **Leadership** - `sections.leadership[]` maps to the same `\resumeProjectHeading` pattern as the reference template.
+5. **Technical Skills** - `sections.skills[]` maps to grouped lines such as `\textbf{Languages}{: Python, Java, SQL} \\[1mm]`.
+
+Field mapping rules:
+
+- `experience[].period` renders in the right column of `\resumeSubheading`.
+- `projects[].tech` must be pipe-separated in JSON, e.g. `ReactJS | Spring Boot | PostgreSQL`; the renderer emits `ReactJS $|$ Spring Boot $|$ PostgreSQL`.
+- `projects[].website`, `projects[].github`, and `projects[].links[]` render inline in the project heading with `\href`.
+- `skills[].category` and `skills[].items[]` render as grouped technical skill rows.
+- Omit unsupported sections entirely rather than fabricating content to fill the template.
+
+### LaTeX Style Examples
+
+Avoid vague bullets:
+
+```text
+Worked on backend systems and used cloud services.
+```
+
+Prefer compact, technical, outcome-led bullets:
+
+```text
+Designed **GCP-backed ingestion workflows** using **BigQuery** and scheduled validation jobs, improving traceability across geospatial reconciliation outputs.
+```
+
+Avoid responsibility-only bullets:
+
+```text
+Responsible for creating machine learning features.
+```
+
+Prefer system, stack, and result:
+
+```text
+Engineered **LLM orchestration** flows with **Gemini API** and retrieval-backed prompts, reducing manual analysis steps in the application workflow.
+```
+
+Before final rendering, enforce:
+
+- One result or system outcome per bullet.
+- Technologies appear only when tied to a concrete action or result.
+- Markdown bolding is limited to technologies, metrics, and role-critical phrases.
+- No over-bolded full sentences.
+- No "passionate", "responsible for", "helped with", "worked on", or "familiar with" unless the user explicitly wants a beginner framing.
+
+### Renderer QA Checklist
+
+Before LaTeX rendering:
+
+- No empty rendered sections.
+- Project tech uses pipe-separated values.
+- Project links are attached to the heading, not the bullets.
+- Periods use the `May 2024 -- Sep 2024` style when months are available.
+- Skills are grouped into 3-5 scan categories.
+- Bullets are short enough for the dense template.
+- Markdown emphasis markers are balanced and not nested.
+
+Before HTML rendering:
+
+- Summary remains concise and source-backed.
+- Competency tags are not overloaded.
+- Section order remains ATS-friendly.
+- Markdown emphasis is used sparingly and only for scan-critical terms.
 
 ## CV Content Generation
 

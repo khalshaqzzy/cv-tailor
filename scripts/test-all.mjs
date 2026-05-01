@@ -224,6 +224,18 @@ const profileTemplate = readFileSync(join(pluginRoot, 'templates/profile.example
 if (!profileTemplate.includes('Jane Smith') && !profileTemplate.includes('jane@example.com')) pass('runtime profile template has no fake person data');
 else fail('runtime profile template still contains fake person data');
 
+const latexReference = readFileSync(join(pluginRoot, 'examples/latex-reference-template.tex'), 'utf8');
+if (
+  latexReference.includes('\\resumeProjectHeading')
+  && latexReference.includes('$|$')
+  && latexReference.includes('\\section{Technical Skills}')
+  && latexReference.includes('Engineered \\textbf{Large Language Models')
+) {
+  pass('LaTeX reference template preserves source structure and language style');
+} else {
+  fail('LaTeX reference template is missing expected structure or language markers');
+}
+
 const absolutePathPatterns = ['C:\\Users\\', '/Users/'];
 const scanTargets = [
   'skills/cv-tailor/SKILL.md',

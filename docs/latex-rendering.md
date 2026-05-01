@@ -48,6 +48,22 @@ format:
   Technical Skills.
 - Empty sections are omitted rather than rendered with placeholder text.
 
+The full reference document is tracked at:
+
+```text
+examples/latex-reference-template.tex
+```
+
+Use that file as the source-of-truth example for:
+
+- contact header rhythm and separators
+- `\resumeSubheading` experience and education rows
+- `\resumeProjectHeading` project/leadership rows
+- project links in the heading, not the bullets
+- `$|$` separators for project technologies
+- grouped technical skills rows
+- dense, technical, metric-forward bullet language
+
 ## Writing Style
 
 Both HTML and LaTeX renderers should use the same CV-writing policy:
@@ -58,6 +74,8 @@ Both HTML and LaTeX renderers should use the same CV-writing policy:
 - Source-backed metrics only; never invent percentages, counts, credentials, or
   dates.
 - Truthful JD vocabulary translation rather than keyword stuffing.
+- Prefer the reference template's delivery pattern: action verb, bolded
+  technology or domain, concrete system/scope, and sourced result.
 
 The renderers convert Markdown emphasis into:
 

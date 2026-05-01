@@ -35,6 +35,7 @@ requireFile(join(pluginRoot, 'THIRD_PARTY_NOTICES.md'), 'third-party notices');
 requireFile(join(pluginRoot, 'skills', 'cv-tailor', 'SKILL.md'), 'cv-tailor skill');
 requireFile(join(pluginRoot, 'templates', 'cv-template.html'), 'CV HTML template');
 requireFile(join(pluginRoot, 'templates', 'cv-template.tex'), 'CV LaTeX template');
+requireFile(join(pluginRoot, 'examples', 'latex-reference-template.tex'), 'LaTeX reference template example');
 requireFile(join(pluginRoot, 'templates', 'profile.example.yml'), 'profile template');
 requireFile(join(pluginRoot, 'templates', 'story-bank.template.md'), 'story bank template');
 requireFile(join(pluginRoot, 'docs', 'install-codex-local.md'), 'Codex local install docs');

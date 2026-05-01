@@ -350,6 +350,7 @@ The `examples/` directory contains fixtures adapted from the Career Ops style:
 | `examples/evaluation-report.example.md` | Example A-G evaluation report. |
 | `examples/tailored-cv.example.json` | Valid source-backed tailored CV fixture. |
 | `examples/tailored-cv.latex.example.json` | Valid LaTeX-capable tailored CV fixture. |
+| `examples/latex-reference-template.tex` | Full LaTeX reference resume for structure, formatting, and writing style. |
 | `examples/unsupported-claim.example.json` | Negative fixture that should fail validation. |
 | `examples/run-manifest.example.json` | Example run manifest. |
 | `examples/codex-marketplace.local.example.json` | Local Codex marketplace registration example. |
@@ -468,6 +469,7 @@ The LaTeX template preserves the supplied resume structure:
 
 - Education, Work Experience, Projects, Leadership, Technical Skills.
 - Compact bullets, dense technical phrasing, and `\textbf{}` emphasis for technologies, metrics, and outcomes.
+- Full reference example: `examples/latex-reference-template.tex`.
 - Empty sections are skipped instead of rendered with placeholders.
 - Windows Tectonic `0.16.9` is bundled under `bin/tectonic.exe`.
 - No system TeX installation or external Codex LaTeX plugin is required for the
